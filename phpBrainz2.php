@@ -36,16 +36,15 @@ define('TRACK_URL', "http://musicbrainz.org/ws/1/track/");
 define('LABEL_URL', "http://musicbrainz.org/ws/1/label/");
 
 $curdir = dirname(__FILE__)."/";
-require($curdir."phpBrainz.abstractFilter.class.php");
+require($curdir."lib/phpBrainz.abstractFilter.class.php");
 
-require($curdir."phpBrainz.releaseFilter.class.php");
-require($curdir."phpBrainz.trackFilter.class.php");
-require($curdir."phpBrainz.artistFilter.class.php");
+require($curdir."lib/phpBrainz.releaseFilter.class.php");
+require($curdir."lib/phpBrainz.trackFilter.class.php");
+require($curdir."lib/phpBrainz.artistFilter.class.php");
 
-require($curdir."phpBrainz.artist.class.php");
-require($curdir."phpBrainz.track.class.php");
-require($curdir."phpBrainz.release.class.php");
-
+require($curdir."lib/phpBrainz.artist.class.php");
+require($curdir."lib/phpBrainz.track.class.php");
+require($curdir."lib/phpBrainz.release.class.php");
 
 
 class phpBrainz{	
