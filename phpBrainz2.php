@@ -9,10 +9,13 @@ require($curdir."lib/phpBrainz2.releaseFilter.class.php");
 require($curdir."lib/phpBrainz2.trackFilter.class.php");
 require($curdir."lib/phpBrainz2.artistFilter.class.php");
 
-require($curdir."lib/phpBrainz2.artist.class.php");
 require($curdir."lib/phpBrainz2.track.class.php");
 require($curdir."lib/phpBrainz2.release.class.php");
 */
+
+require($curdir."lib/phpBrainz2.entity.php");
+require($curdir."lib/phpBrainz2.artist.php");
+require($curdir."lib/phpBrainz2.release.php");
 
 
 class phpBrainz2 {	
@@ -45,28 +48,35 @@ class phpBrainz2 {
      * ======================================
      */
 
-    public function lookupArtist($mbid, array $inc) {
+    public function lookupArtist($mbid, $inc = array())
+    {
+        $this->_checkAllowedInc('artist', $inc);
         $result = $this->_lookup('artist', $mbid, $inc);
-        return $result;
+        $data['artist'] = new phpBrainz2_Artist($result);
+        foreach ($inc as $include) {
+            $func = $this->_mapIncToMethod($include);
+            $data[$include] = call_user_func($func, $result, 'artist');
+        }
+        return $data;
     }
 
-    public function lookupLabel($mbid, array $inc) {
+    public function lookupLabel($mbid, $inc = array()) {
         
     }
 
-    public function lookupRecording($mbid, array $inc) {
+    public function lookupRecording($mbid, $inc = array()) {
         
     }
 
-    public function lookupRelease($mbid, array $inc) {
+    public function lookupRelease($mbid, $inc = array()) {
         
     }
 
-    public function lookupReleaseGroup($mbid, array $inc) {
+    public function lookupReleaseGroup($mbid, $inc = array()) {
         
     }
 
-    public function lookupWork($mbid, array $inc) {
+    public function lookupWork($mbid, $inc = array()) {
         
     }
 
@@ -144,18 +154,50 @@ class phpBrainz2 {
      * ======================================
      */
     
+    /**
+     * Generic lookup method
+     * 
+     * @param type $entity
+     * @param type $mbid
+     * @param type $inc
+     * @return SimpleXMLElement
+     * @throws Exception 
+     */
     private function _lookup($entity, $mbid, $inc) {
         
-        $xml = @simplexml_load_file(self::URL);
+        $uri = self::URL.$entity.'/'.$mbid;
         
-        if (!$xml) {
-            throw new Exception("The $entity lookup failed.");   ###throw custom Exception
+        if (!empty($inc))
+        {
+            $uri .= '?inc=' . implode('+', $inc);
         }
         
-        $result = $this->_parse_MB_xml($xml);
+        $result = @simplexml_load_file($uri);
+        
+        if ( ! $result) {
+            throw new Exception("The $entity lookup failed.");   ###throw custom Exception rather
+        }
         
         return $result;
     }
 	
+    
+    private function _checkAllowedInc($entity, $inc) {
+    
+        if ($inc[0] !== 'releases') {
+            throw new Exception("$inc[0] may not be included for $entity");
+        }
+        
+    }
+  
+    
+    private function _mapIncToMethod($inc) {
+    
+        $map = array(
+            'releases' => 'phpBrainz2_Release::getReleases',
+        );
+        
+        return $map[$inc];
+    }
 }
 ?>

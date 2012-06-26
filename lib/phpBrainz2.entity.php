@@ -10,15 +10,6 @@ abstract class phpBrainz2_Entity {
         'tags', 'ratings',  //not valid on releases - ###
         'user-tags', 'user-ratings'  //requires auth
     );
-
-    protected function doRequest($query_string);
-    
-    protected function lookup($mbid, array $inc);
-
-    protected function browse($mbid, array $inc);
-
-    protected function search($mbid, array $inc);
-
     
 }
 
