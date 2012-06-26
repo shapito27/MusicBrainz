@@ -1,5 +1,7 @@
 <?php
-require_once("../phpBrainz.class.php");
+
+require_once("../phpBrainz2.php");
+
 $mbid = "d615590b-1546-441d-9703-b3cf88487cbd";
 
 $trackIncludes = array(
@@ -8,5 +10,6 @@ $trackIncludes = array(
 	"puids"
 	);
 
-$phpBrainz = new phpBrainz();
-print_r($phpBrainz->getTrack($mbid,$trackIncludes));
+$phpBrainz2 = new phpBrainz2();
+
+print_r($phpBrainz->get($mbid,$trackIncludes));

@@ -2,14 +2,9 @@
 /**
  * Represents a release object.
  * 
- * @package phpBrainz
- * @author Jeff Sherlock
- * @copyright Jeff Sherlock 2007
- * @name phpBrainz_Release
- *
  */
-
-class phpBrainz_Release{
+class phpBrainz2_Release {
+    
     private $artist;
     private $title;
     private $tracksCount;
@@ -20,6 +15,8 @@ class phpBrainz_Release{
     private $score;
     private $tracksOffset;
     
+    private $incList = array('artists', 'labels', 'recordings', 'release-groups');
+
     function __construct(){
     	$this->tracks = array();
     }

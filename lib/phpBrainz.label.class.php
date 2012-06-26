@@ -1,5 +1,7 @@
 <?php
-class phpBrainz_Label{
+
+class phpBrainz2_Label{
+    
     private $type;
     private $name;
     private $sortName;
@@ -9,6 +11,8 @@ class phpBrainz_Label{
     private $country;
     private $code;
     private $aliases;
+    
+    private $incList = array('releases');
     
     public function __construct(){
     }
