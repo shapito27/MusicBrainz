@@ -3,6 +3,7 @@
 $dir = dirname(__FILE__);
 
 require_once($dir . '/lib/MusicBrainzArtist.php');
+require_once($dir . '/lib/MusicBrainzRelease.php');
 
 /**
  * Musicbrainz XML web service
@@ -59,6 +60,9 @@ class MusicBrainz {
         if ( ! $result ) {
             throw new Exception("The $entity lookup failed.");   ###throw custom Exception rather
         }
+
+        //===DEBUG===
+        //print_r($result);
 
         $class_name = 'MusicBrainz' . ucfirst($entity);
 

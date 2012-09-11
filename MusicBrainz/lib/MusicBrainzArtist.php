@@ -14,12 +14,15 @@ class MusicBrainzArtist {
     private $country;
     private $beginDate;
     private $endDate;
-    private $disambiguation;
-    private $releasesCount;
-    private $releasesOffset;
-    
+
+    private $xml;
+
+    private $releases = array();
+
     function __construct( SimpleXMLElement $artist_data )
     {
+        $this->xml = $artist_data;
+
         $this->id        = (string) $artist_data->artist['id'];
         $this->type      = (string) $artist_data->artist['type'];
         $this->name      = (string) $artist_data->artist->name;
@@ -36,5 +39,10 @@ class MusicBrainzArtist {
     public function __get($name) {
        return isset($this->$name) ? $this->$name : null;
     }
-        
+
+    public function getReleases()
+    {
+        return MusicBrainzRelease::getIncludedReleases($this->xml, 'artist');
+    }
+
 }
