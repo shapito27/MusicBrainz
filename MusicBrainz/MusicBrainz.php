@@ -2,8 +2,13 @@
 
 $dir = dirname(__FILE__);
 
+// create autoloader #todo
+
 require_once($dir . '/lib/MusicBrainzArtist.php');
 require_once($dir . '/lib/MusicBrainzRelease.php');
+require_once($dir . '/lib/MusicBrainzCountry.php');
+
+require_once($dir . '/lib/MusicBrainzException.php');
 
 /**
  * Musicbrainz XML web service
@@ -38,41 +43,35 @@ class MusicBrainz {
      * @param array $inc
      * @return object | bool
      */
-    public function lookup($entity, $mbid, $inc = array())
+    public function lookup($entity_name, $mbid, $includes = array())
     {
 
-        if ( ! $this->_checkAllowedEntity($entity) )
+        if ( ! $this->_checkAllowedEntity($entity_name) )
         {
             return false;
         }
 
-        $this->_checkAllowedIncludes($entity, $inc);
+        $this->_checkAllowedIncludes($entity_name, $includes);
 
-        $uri = self::URL . $entity . '/' . $mbid;
+        $uri = self::URL . $entity_name . '/' . $mbid;
 
-        if ( ! empty($inc) )
+        if ( ! empty($includes) )
         {
-            $uri .= '?inc=' . implode('+', $inc);
+            $uri .= '?inc=' . implode('+', $includes);
         }
 
-        $result = simplexml_load_file($uri);
+        $xml = simplexml_load_file($uri);
 
-        if ( ! $result ) {
-            throw new Exception("The $entity lookup failed.");   ###throw custom Exception rather
+        if ( ! $xml ) {
+            throw new MusicBrainzException("The $entity_name lookup failed.");
         }
 
         //===DEBUG===
-        //print_r($result);
+        //print_r($xml);
 
-        $class_name = 'MusicBrainz' . ucfirst($entity);
+        $class_name = 'MusicBrainz' . ucfirst($entity_name);
 
-        $object = new $class_name($result);
-
-        //not sure yet how this will work...
-        /*foreach ($inc as $include) {
-            $func = $this->_mapIncToMethod($include);
-            $data[$include] = call_user_func($func, $result, 'artist');
-        }*/
+        $object = new $class_name($xml);
 
         return $object;
     }

@@ -5,26 +5,28 @@
  */
 class MusicBrainzRelease {
     
-    private $artist;
+    private $id;
     private $title;
     private $status;
-    private $id;
-    private $discCount;
-    private $asin;
-    private $tracks;
-    private $score;
-    private $tracksOffset;
-    
-    private $incList = array('artists', 'releases');
+    private $quality;
+    private $language;
+    private $script;
+    private $date;
+    private $country;
+    private $barcode;
 
-    
     function __construct(SimpleXMLElement $xml ){
 
-        $this->id     = (string) $xml['id'];
-        $this->title  = $xml->title;
-        $this->status = $xml->status;
+        $this->id        = (string) $xml['id'];
+        $this->title     = (string) $xml->title;
+        $this->status    = (string) $xml->status;
+        $this->quality   = (string) $xml->quality;
+        $this->language  = (string) $xml->{'text-representation'}->language;
+        $this->script    = (string) $xml->{'text-representation'}->script;
+        $this->date      = (string) $xml->date;
+        $this->country   = (string) $xml->country;
+        $this->barcode   = (string) $xml->barcode;
 
-        //more to come #todo
     }
 
     /**
@@ -35,8 +37,8 @@ class MusicBrainzRelease {
      * @param $entity string
      * @return array
      */
-    public static function getIncludedReleases(SimpleXMLElement $result, $entity) {
-    
+    public static function getIncluded(SimpleXMLElement $result, $entity)
+    {
         $releases = array();
         
         if (isset($result->$entity->{'release-list'}))
@@ -50,4 +52,3 @@ class MusicBrainzRelease {
         return $releases;
     }
 }
-

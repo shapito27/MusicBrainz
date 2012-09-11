@@ -40,9 +40,18 @@ class MusicBrainzArtist {
        return isset($this->$name) ? $this->$name : null;
     }
 
+    /**
+     *  The following methods are the getters for includes
+     */
+
     public function getReleases()
     {
-        return MusicBrainzRelease::getIncludedReleases($this->xml, 'artist');
+        return MusicBrainzRelease::getIncluded($this->xml, 'artist');
+    }
+
+    public function getRecordings()
+    {
+        return MusicBrainzRecording::getIncluded($this->xml, 'artist');
     }
 
 }
