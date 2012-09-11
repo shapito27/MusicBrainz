@@ -1,9 +1,12 @@
-Welcome to phpbrainz2!
+Welcome to the MusicBrainz XML service PHP class!
 
-This project is a fork of phpbrainz updating the library to use the newer (v2)
-XML API provided by MusicBrainz (http://musicbrainz.org).
+This project is a fork of https://github.com/olds/phpbrainz updating the
+library to use the newer (v2) XML API provided by MusicBrainz
+  (http://musicbrainz.org).
 
-NOTE: work on this hasn't begun yet. This is the initial commit.
+NOTE: This is a work in progress.
+
+I've only implemented the Artist lookup so far. More good things to come :)
 
 
 Original phpbrainz README:

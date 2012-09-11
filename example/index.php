@@ -3,19 +3,19 @@
 error_reporting(E_ALL);
 @ini_set('display_errors', 1);
 
-include 'MusicBrainz/MusicBrainz.php';
+include '../MusicBrainz/MusicBrainz.php';
 
-$pb2 = new MusicBrainz();
+$mb = new MusicBrainz();
 
+// Artist lookup
 
-$include = array('releases');
+$artist = $mb->lookup('artist', '4dbf5678-7a31-406a-abbe-232f8ac2cd63' );  //bryan adams
 
-/* @var $artist phpBrainz2_Artist */
-
-$mbData = $pb2->lookupArtist('4dbf5678-7a31-406a-abbe-232f8ac2cd63', $include);  //bryan adams
-
-print_r($mbData);
+print_r($artist);
 
 
+// Artist lookup with release list
 
+//$artist_with_releases = $mb->lookup('artist', '4dbf5678-7a31-406a-abbe-232f8ac2cd63', array('releases') );  //bryan adams
+//print_r($artist_with_releases);  //TODO: get release list into the object
 
