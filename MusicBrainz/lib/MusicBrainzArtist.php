@@ -34,10 +34,10 @@ class MusicBrainzArtist {
     }
 
     /**
-     *  Magic __get method
+     *  Magic getter
      */
-    public function __get($name) {
-       return isset($this->$name) ? $this->$name : null;
+    public function __get($var) {
+       return isset($this->$var) ? $this->$var : null;
     }
 
     /**
@@ -52,6 +52,11 @@ class MusicBrainzArtist {
     public function getRecordings()
     {
         return MusicBrainzRecording::getIncluded($this->xml, 'artist');
+    }
+
+    public function getReleaseGroups()
+    {
+        return MusicBrainzReleaseGroup::getIncluded($this->xml, 'artist');
     }
 
 }

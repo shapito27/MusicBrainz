@@ -1,27 +1,35 @@
 <?php
-
-$dir = dirname(__FILE__);
+/**
+ * MusicBrainz PHP library
+ *
+ * Please contribute!
+ *
+ * @license GPL2
+ */
 
 // create autoloader #todo
 
-require_once($dir . '/lib/MusicBrainzArtist.php');
-require_once($dir . '/lib/MusicBrainzRelease.php');
-require_once($dir . '/lib/MusicBrainzCountry.php');
+require_once 'lib/MusicBrainzArtist.php';
+require_once 'lib/MusicBrainzRelease.php';
+require_once 'lib/MusicBrainzReleaseGroup.php';
+require_once 'lib/MusicBrainzRecording.php';
+require_once 'lib/MusicBrainzCountry.php';
 
-require_once($dir . '/lib/MusicBrainzException.php');
+require_once 'lib/MusicBrainzException.php';
 
 /**
- * Musicbrainz XML web service
+ * Connect to the MusicBrainz XML web service
  *
  * http://musicbrainz.org/doc/XML_Web_Service
  *
- * @author Chris Dawson chrisd@wson.co.za
+ * @link http://github.com/chrisdawson/musicbrainz
  */
 class MusicBrainz {
     
     const URL = 'http://musicbrainz.org/ws/2/';
 
-    private static $allowed_entities = array('artist', 'label', 'recording', 'release', 'release-group', 'work');
+    private static $allowed_entities = array('artist', 'label', 'recording', 'release',
+         'release-group', 'work');
 
     private static $allowed_includes = array(
         'artist' => array('recordings', 'releases', 'release-groups', 'works'),
@@ -69,7 +77,7 @@ class MusicBrainz {
         //===DEBUG===
         //print_r($xml);
 
-        $class_name = 'MusicBrainz' . ucfirst($entity_name);
+        $class_name = 'MusicBrainz' . str_replace('-', '', ucwords($entity_name));
 
         $object = new $class_name($xml);
 
@@ -204,4 +212,3 @@ class MusicBrainz {
 
 
 }
-?>
