@@ -19,18 +19,40 @@ Copyright (c) 2007 Jeff Sherlock
 
 */
 
-require_once("../phpBrainz.class.php");
+namespace MusicBrainz\Filters;
 
-//Create new phpBrainz object
-$phpBrainz = new phpBrainz();
+use MusicBrainz\Tag;
 
-$args = array(
-    "title"=>"Buddy Holly",
-    "artist"=>"Weezer"
-);
+/**
+ * This is the release filter and it contains
+ * an array of valid argument types to be used
+ * when querying the musicbrainz xml web service.
+ *
+ * @author Jeff Sherlock
+ * @copyright Jeff Sherlock 2007
+ * @package phpBrainz
+ * @name phpBrainz_ReleaseFilter
+ *
+ */
+class TagFilter extends AbstractFilter implements FilterInterface
+{
+    protected $validArgTypes =
+        array(
+            'tag'
+        );
 
-$trackFilter = new phpBrainz_TrackFilter($args);
-$trackResults = $phpBrainz->findTrack($trackFilter);
-print_r($trackResults);
+    public function getEntity()
+    {
+        return 'tag';
+    }
 
+    public function parseResponse(array $response)
+    {
+        $tags = array();
+        foreach ($response['tags'] as $tag) {
+            $tags[] = new Tag($tag);
+        }
 
+        return $tags;
+    }
+}

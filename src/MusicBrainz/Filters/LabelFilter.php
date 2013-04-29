@@ -18,28 +18,52 @@ phpBrainz is a php class for querying the musicbrainz web service.
 Copyright (c) 2007 Jeff Sherlock
 
 */
+
+namespace MusicBrainz\Filters;
+
+use MusicBrainz\Label;
+
 /**
- * 
+ * class phpBrainz_ArtistFilter
  * @author Jeff Sherlock
  * @copyright Jeff Sherlock 2007
  * @package phpBrainz
- * @name phpBrainz_TrackFilter
- * 
+ * @name phpBrainz_ArtistFilter
+ *
  */
-class phpBrainz_TrackFilter extends phpBrainz_Abstract_Filter {
-	public $validArgTypes = 
-		array(
-    		"title",
-    		"artist",
-    		"artistid",
-    		"releasetype",
-    		"releaseid",
-    		"release",
-    		"duration",
-    		"count",
-    		"tracknum",
-    		"script",
-    		"limit",
-    		"puid"
-		);
+class LabelFilter extends AbstractFilter implements FilterInterface
+{
+    protected $validArgTypes =
+        array(
+            'aliaas',
+            'begin',
+            'code',
+            'comment',
+            'country',
+            'end',
+            'ended',
+            'ipi',
+            'label',
+            'labelaccent',
+            'laid',
+            'sortname',
+            'tag',
+            'type'
+        );
+
+    public function getEntity()
+    {
+        return 'label';
+    }
+
+    public function parseResponse(array $response)
+    {
+        $labels = array();
+
+        foreach ($response['labels'] as $label) {
+            $labels[] = new Label($label);
+        }
+
+        return $labels;
+    }
 }

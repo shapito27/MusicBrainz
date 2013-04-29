@@ -1,4 +1,7 @@
 <?php
+
+namespace MusicBrainz;
+
 /**
  * MusicBrainz release-group
  */
@@ -8,8 +11,8 @@
  *
  * Can be filtered by type.
  */
-class MusicBrainzReleaseGroup {
-    
+class ReleaseGroup
+{
     private $id;
 
     private $type;
@@ -27,10 +30,9 @@ class MusicBrainzReleaseGroup {
     /**
      * @todo
      */
-    public function __construct(SimpleXMLElement $xml )
+    public function __construct(SimpleXMLElement $xml)
     {
-        if ( isset($xml->{'release-group'}) )
-        {
+        if ( isset($xml->{'release-group'}) ) {
             $xml = $xml->{'release-group'};
         }
 
@@ -40,10 +42,8 @@ class MusicBrainzReleaseGroup {
         $this->first_release_date = (string) $xml->{'first-release-date'};
         $this->primary_type       = (string) $xml->{'primary-type'};
 
-        if ( isset($xml->{'secondary-type-list'}) )
-        {
-            foreach ( $xml->{'secondary-type-list'}->{'secondary-type'} as $type)
-            {
+        if ( isset($xml->{'secondary-type-list'}) ) {
+            foreach ($xml->{'secondary-type-list'}->{'secondary-type'} as $type) {
                $this->secondary_types[] = (string) $type[0];
             }
         }
@@ -52,7 +52,8 @@ class MusicBrainzReleaseGroup {
     /**
      *  Magic getter
      */
-    public function __get($var) {
+    public function __get($var)
+    {
         return isset($this->$var) ? $this->$var : null;
     }
 
@@ -68,14 +69,12 @@ class MusicBrainzReleaseGroup {
     {
         $release_groups = array();
 
-        if (isset($result->$entity->{'release-group-list'}))
-        {
-            foreach ( $result->$entity->{'release-group-list'}->{'release-group'} as $release_group)
-            {
+        if (isset($result->$entity->{'release-group-list'})) {
+            foreach ($result->$entity->{'release-group-list'}->{'release-group'} as $release_group) {
                 $release_groups[] = new self($release_group);
             }
         }
-        
+
         return $release_groups;
     }
 }

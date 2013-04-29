@@ -1,21 +1,53 @@
-Welcome to the MusicBrainz XML service PHP class!
+# MusicBrainz Web Service (v2) PHP class
 
-This project is a fork of https://github.com/olds/phpbrainz updating the
-library to use the newer (v2) XML API provided by MusicBrainz
-  (http://musicbrainz.org).
+This PHP library that allows you to easily access the MusicBrainz Web Service V2 API. Visit the [MusicBrainz development page](http://musicbrainz.org/doc/Development) for more information.
 
-NOTE: This is a work in progress.
+This project is a fork of https://github.com/chrisdawson/MusicBrainz and takes some inspiration from the [Python bindings](https://github.com/alastair/python-musicbrainz-ngs)
 
-I've only implemented the Artist lookup so far. More good things to come :)
+## Usage Example
 
 
-Original phpbrainz README:
+```php
+<?php
+    use MusicBrainz\MusicBrainz;
+    use MusicBrainz\Filters\RecordingFilter;
+    
+    require __DIR__ . '/vendor/autoload.php';
+    
+    $brainz = new MusicBrainz('username', 'password');
+    $brainz->setUserAgent('YourAppName', '0.1', 'http://example.com');
+    
+    $args = array(
+        "recording"  => "Buddy Holly",
+        "artist"     => 'Weezer',
+        "creditname" => 'Weezer',
+        "status"     => 'Official'
+    );
+    try {
+        $recordings = $brainz->searchRecording(new RecordingFilter($args));
+        print_r($recordings);
+    } catch (Exception $e) {
+        print $e->getMessage();
+    }
+?>
+```
 
-This is an OO PHP 5 library for accessing the musicbrainz API. To search the
-API, there are two different methods to access the musicbrainz API. One is a
-search based on criteria such as artist name, track name, release year, etc.
-The other is a retrieval of a specific musicbrainz record based on a specific
-identifier for the musicbrainz database (MBID). Typically you search for
-results using a release, track, or artist filter, then from those results
-retrieve the specific record you want with the detailed information. There are
-examples in the examples folder.
+Look in the /examples folder for more.
+
+## Requirements
+PHP5 and [cURL extension](http://php.net/manual/en/book.curl.php).
+
+
+## License
+
+**Short:** Use it in any project, no matter if it is commercial or not. Just don't remove the copyright notice.
+
+**MIT License**
+
+Copyright © 2013 Mike Almond
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

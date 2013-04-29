@@ -1,6 +1,8 @@
 <?php
 
-class MusicBrainzCountry
+namespace MusicBrainz;
+
+class Country
 {
     private static $countries = array(
         'GB' => 'Great Britain',
@@ -16,11 +18,10 @@ class MusicBrainzCountry
      */
     public static function getName($country_code)
     {
-        if ( isset(self::$countries[$country_code]) )
-        {
+        if ( isset(self::$countries[$country_code]) ) {
             return self::$countries[$country_code];
-        }
-        else
+        } else
+
             return false;
     }
 }
