@@ -24,7 +24,7 @@ require_once '../vendor/autoload.php';
 
 //Create new phpBrainz object
 $brainz = new MusicBrainz();
-$brainz->setUserAgent('GraphRadio', '0.1', 'http://graphradio.com');
+$brainz->setUserAgent('ApplicationName', '0.1', 'http://example.com');
 
 $includes = array('labels', 'recordings');
 try {
