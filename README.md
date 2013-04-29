@@ -15,7 +15,7 @@ This project is a fork of https://github.com/chrisdawson/MusicBrainz and takes s
     require __DIR__ . '/vendor/autoload.php';
     
     $brainz = new MusicBrainz('username', 'password');
-    $brainz->setUserAgent('YourAppName', '0.1', 'http://example.com');
+    $brainz->setUserAgent('ApplicationName', '0.1', 'http://example.com');
     
     $args = array(
         "recording"  => "Buddy Holly",
@@ -24,7 +24,7 @@ This project is a fork of https://github.com/chrisdawson/MusicBrainz and takes s
         "status"     => 'Official'
     );
     try {
-        $recordings = $brainz->searchRecording(new RecordingFilter($args));
+        $recordings = $brainz->search(new RecordingFilter($args));
         print_r($recordings);
     } catch (Exception $e) {
         print $e->getMessage();
