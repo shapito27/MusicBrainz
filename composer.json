@@ -1,7 +1,7 @@
 {
     "name": "mikealmond/musicbrainz",
     "type": "library",
-    "description": "A library for accessing the musicbrainz API",
+    "description": "A PHP library for accessing the MusicBrainz API",
     "keywords": ["musicbrainz", "library", "php", "api"],
     "homepage": "https://github.com/mikealmond/musicbrainz",
     "license": "MIT",
