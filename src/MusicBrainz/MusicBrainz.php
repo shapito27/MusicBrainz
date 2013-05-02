@@ -306,7 +306,7 @@ class MusicBrainz
     {
 
         if (!$this->checkAllowedEntity($entity)) {
-            throw new Excpetion('Invalid entity');
+            throw new Exception('Invalid entity');
         }
 
         $this->isValidInclude($includes, self::$validIncludes[$entity]);
