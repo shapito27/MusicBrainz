@@ -19,11 +19,12 @@ Copyright (c) 2007 Jeff Sherlock
 
 */
 use MusicBrainz\MusicBrainz;
+use Guzzle\Http\Client;
 
 require_once '../vendor/autoload.php';
 
 //Create new phpBrainz object
-$brainz = new MusicBrainz('username', 'password');
+$brainz = new MusicBrainz(new Client(), 'username', 'password');
 $brainz->setUserAgent('ApplicationName', '0.1', 'http://example.com');
 
 

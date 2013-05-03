@@ -279,16 +279,25 @@ class MusicBrainz
     private $password = null;
 
     /**
+     * The Guzzle client used to make cURL requests
+     *
+     * @var \Guzzle\Http\Client
+     */
+    private $client;
+
+    /**
      * Initializes the class. You can pass the user’s username and password
      * However, you can modify or add all values later.
      *
+     * @param \Guzzle\Http\Client $client The Guzzle client used to make requests
      * @param string $user
      * @param string $password
      */
-    public function __construct($user = null, $password = null)
+    public function __construct(Client $client, $user = null, $password = null)
     {
         $this->setUser($user);
         $this->setPassword($password);
+        $this->client = $client;
 
     }
 
@@ -448,11 +457,12 @@ class MusicBrainz
             throw new Exception('You must set a valid User Agent before accessing the MusicBrainz API');
         }
 
-        $client = new Client(self::URL, array(
+        $this->client->setBaseUrl(self::URL);
+        $this->client->setConfig(array(
             'data' => $params
         ));
-
-        $request = $client->get($path . '{?data*}');
+        
+        $request = $this->client->get($path . '{?data*}');
         $request->setHeader('Accept', 'application/json');
         $request->setHeader('User-Agent', $this->userAgent);
         

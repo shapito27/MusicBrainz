@@ -27,6 +27,6 @@
         }
     },
     "require": {
-        "guzzle/guzzle": "dev-master"
+        "guzzle/guzzle": "~3.4"
     }
 }
