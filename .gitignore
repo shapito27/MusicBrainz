@@ -1,3 +1,3 @@
-/test/coverage/
+/tests/MusicBrainz/Coverage/
 /vendor/
 composer.lock
