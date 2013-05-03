@@ -446,7 +446,7 @@ class MusicBrainz
      * @param  string $method GET|POST
      * @return array
      */
-    final private function call($path, array $params = array(), $method = 'GET', $isAuthRequred = false)
+    private function call($path, array $params = array(), $method = 'GET', $isAuthRequred = false)
     {
 
         if ($this->userAgent == '') {
