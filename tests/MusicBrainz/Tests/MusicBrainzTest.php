@@ -13,8 +13,9 @@ class MusicBrainzTest extends \PHPUnit_Framework_TestCase
     {
         $this->brainz = new MusicBrainz();
     }
-    
-    public function MBIDProvider() {
+
+    public function MBIDProvider()
+    {
         return array(
             array(true, '4dbf5678-7a31-406a-abbe-232f8ac2cd63')
           , array(true, '4dbf5678-7a31-406a-abbe-232f8ac2cd63')

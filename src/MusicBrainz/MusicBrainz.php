@@ -1,21 +1,13 @@
 <?php
 
-/**
- * MusicBrainz PHP library
- *
- * Please contribute!
- *
- * @license MIT
- */
-
 namespace MusicBrainz;
 
 use Guzzle\Http\Client;
 
 /**
- * Connect to the MusicBrainz XML web service
+ * Connect to the MusicBrainz web service
  *
- * http://musicbrainz.org/doc/XML_Web_Service
+ * http://musicbrainz.org/doc/Development
  *
  * @link http://github.com/mikealmond/musicbrainz
  */
@@ -289,15 +281,21 @@ class MusicBrainz
      * Initializes the class. You can pass the user’s username and password
      * However, you can modify or add all values later.
      *
-     * @param \Guzzle\Http\Client $client The Guzzle client used to make requests
-     * @param string $user
-     * @param string $password
+     * @param \Guzzle\Http\Client $client   The Guzzle client used to make requests
+     * @param string              $user
+     * @param string              $password
      */
     public function __construct(Client $client, $user = null, $password = null)
     {
-        $this->setUser($user);
-        $this->setPassword($password);
         $this->client = $client;
+
+        if (null != $user) {
+            $this->setUser($user);
+        }
+
+        if (null != $password) {
+            $this->setPassword($password);
+        }
 
     }
 
@@ -314,11 +312,11 @@ class MusicBrainz
     public function lookup($entity, $mbid, array $includes = array())
     {
 
-        if (!$this->checkAllowedEntity($entity)) {
+        if (!$this->isValidEntity($entity)) {
             throw new Exception('Invalid entity');
         }
 
-        $this->isValidInclude($includes, self::$validIncludes[$entity]);
+        $this->validateInclude($includes, self::$validIncludes[$entity]);
 
         $authRequired = $this->isAuthRequired($entity, $includes);
 
@@ -332,7 +330,6 @@ class MusicBrainz
         return $response;
     }
 
-
     protected function browse(Filters\FilterInterface $filter, $entity, $mbid, array $includes, $limit = 25, $offset = null, $releaseType = array(), $releaseStatus = array())
     {
         if (!$this->isValidMBID($mbid)) {
@@ -343,10 +340,9 @@ class MusicBrainz
             throw new Exception('Limit can only be between 1 and 100');
         }
 
-        $this->isValidInclude($includes, self::$validBrowseIncludes[$filter->getEntity()]);
-        
-        $authRequired = $this->isAuthRequired($filter->getEntity(), $includes);
+        $this->validateInclude($includes, self::$validBrowseIncludes[$filter->getEntity()]);
 
+        $authRequired = $this->isAuthRequired($filter->getEntity(), $includes);
 
         $params  = $this->getBrowseFilterParams($filter->getEntity(), $includes, $releaseType, $releaseStatus);
         $params += array(
@@ -461,11 +457,11 @@ class MusicBrainz
         $this->client->setConfig(array(
             'data' => $params
         ));
-        
+
         $request = $this->client->get($path . '{?data*}');
         $request->setHeader('Accept', 'application/json');
         $request->setHeader('User-Agent', $this->userAgent);
-        
+
         if ($isAuthRequred) {
             if ($this->user != null && $this->password != null) {
                 $request->setAuth($this->user, $this->password, CURLAUTH_DIGEST);
@@ -473,7 +469,7 @@ class MusicBrainz
                 throw new Exception('Authentication is required');
             }
         }
-       
+
         $request->getQuery()->useUrlEncoding(false);
 
         return $request->send()->json();
@@ -491,9 +487,9 @@ class MusicBrainz
      */
     public function getBrowseFilterParams($entity, $includes, array $releaseType = array(), array $releaseStatus = array())
     {
-        //$this->isValidFilter(array($entity), self::$validIncludes);
-        $this->isValidFilter($releaseStatus, self::$validReleaseStatuses);
-        $this->isValidFilter($releaseType, self::$validReleaseTypes);
+        //$this->validateFilter(array($entity), self::$validIncludes);
+        $this->validateFilter($releaseStatus, self::$validReleaseStatuses);
+        $this->validateFilter($releaseType, self::$validReleaseTypes);
 
         if (!empty($releaseStatus)
             && !in_array('releases', $includes)) {
@@ -525,18 +521,18 @@ class MusicBrainz
         return preg_match("/^(\{)?[a-f\d]{8}(-[a-f\d]{4}){4}[a-f\d]{8}(?(1)\})$/i", $mbid);
     }
 
-    public function isValidInclude($includes, $validIncludes)
+    public function validateInclude($includes, $validIncludes)
     {
         foreach ($includes as $include) {
             if (!in_array($include, $validIncludes)) {
-                throw new Exception(sprintf('%s is not a valid include', $include));
+                throw new \OutOfBoundsException(sprintf('%s is not a valid include', $include));
             }
         }
 
         return true;
     }
 
-    public function isValidFilter($values, $valid)
+    public function validateFilter($values, $valid)
     {
         foreach ($values as $value) {
             if (!in_array($value, $valid)) {
@@ -550,8 +546,8 @@ class MusicBrainz
      * Some calls require authentication
      * @return bool
      */
-    protected function isAuthRequired($entity, $includes) {
-        
+    protected function isAuthRequired($entity, $includes)
+    {
         if (in_array('user-tags', $includes) || in_array('user-ratings', $includes)) {
             return true;
         }
@@ -563,26 +559,15 @@ class MusicBrainz
         return false;
     }
 
-
-
     /**
      * Check the list of allowed entities
      *
      * @param $entity
      * @return bool
      */
-    private function checkAllowedEntity($entity)
+    private function isValidEntity($entity)
     {
         return array_key_exists($entity, self::$validIncludes);
-    }
-
-    private function checkAllowedIncludes($entity, $include)
-    {
-        if (!isset(self::$validIncludes[$entity])) {
-            return false;
-        }
-
-        return in_array($include, self::$validIncludes[$entity]);
     }
 
     /**

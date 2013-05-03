@@ -3,7 +3,7 @@
 namespace MusicBrainz;
 
 /**
- * Represents a tag object.
+ * Represents a MusicBrainz label object
  *
  */
 class Label
@@ -15,8 +15,11 @@ class Label
     public $sortName;
     public $country;
 
+    private $data;
+
     public function __construct(array $label)
     {
+        $this->data = $label;
 
         $this->id       = isset($label['id']) ? (string) $label['id'] : '';
         $this->type     = isset($label['type']) ? (string) $label['type'] : '';
@@ -25,6 +28,5 @@ class Label
         $this->name     = isset($label['name']) ? (string) $label['name'] : '';
         $this->country  = isset($label['country']) ? (string) $label['country'] : '';
         $this->aliases  = isset($label['aliases']) ? $label['aliases'] : array();
-
     }
 }

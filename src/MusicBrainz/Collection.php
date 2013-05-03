@@ -1,11 +1,21 @@
 <?php
 
-class phpBrainz2_Collection
+namespace MusicBrainz;
+
+/**
+ * Represents a MusicBrainz collection object
+ *
+ */
+class Collection
 {
-    private $incList = array('releases');
+    public $id;
 
-    public function __construct()
+    private $data;
+
+    public function __construct(array $collection)
     {
-    }
+        $this->data = $collection;
 
+        $this->id = isset($collection['id']) ? (string) $collection['id'] : '';
+    }
 }

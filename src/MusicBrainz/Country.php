@@ -4,24 +4,27 @@ namespace MusicBrainz;
 
 class Country
 {
+    /**
+     * @todo Populate rest of the countries
+     */
     private static $countries = array(
         'GB' => 'Great Britain',
-        //add the rest #todo
     );
 
     /**
      * Get the country name for a MusicBrainz country code
      *
      * @static
-     * @param $country_code
+     * @param $countryCode
+     * @throws \OutOfBoundsException
      * @return bool
      */
-    public static function getName($country_code)
+    public static function getName($countryCode)
     {
-        if ( isset(self::$countries[$country_code]) ) {
-            return self::$countries[$country_code];
-        } else
+        if (!isset(self::$countries[$countryCode])) {
+            throw new \OutOfBoundsException(sprintf("Could not find corresponding country name for the country code %s", $countryCode));
+        }
 
-            return false;
+        return self::$countries[$countryCode];
     }
 }

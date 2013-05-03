@@ -3,7 +3,7 @@
 namespace MusicBrainz;
 
 /**
- * Represents a release object.
+ * Represents a MusicBrainz release object
  *
  */
 class Release
@@ -19,8 +19,11 @@ class Release
     public $barcode;
     public $artists = array();
 
+    private $data;
+
     public function __construct(array $release)
     {
+        $this->data = $release;
 
         $this->id        = isset($release['id']) ? (string) $release['id'] : '';
         $this->title     = isset($release['title']) ? (string) $release['title'] : '';
@@ -31,27 +34,5 @@ class Release
         $this->date      = isset($release['date']) ? (string) $release['date'] : '';
         $this->country   = isset($release['country']) ? (string) $release['country'] : '';
         $this->barcode   = isset($release['barcode']) ? (string) $release['barcode'] : '';
-
-    }
-
-    /**
-     * Get included releases from the XML of another entity
-     *
-     * @static
-     * @param \SimpleXMLElement $result
-     * @param $entity string
-     * @return array
-     */
-    public static function getIncluded(\SimpleXMLElement $result, $entity)
-    {
-        $releases = array();
-
-        if (isset($result->$entity->{'release-list'})) {
-            foreach ($result->$entity->{'release-list'}->release as $release) {
-                $releases[] = new self($release);
-            }
-        }
-
-        return $releases;
     }
 }
