@@ -11,12 +11,13 @@ This project is a fork of https://github.com/chrisdawson/MusicBrainz and takes s
 <?php
     use MusicBrainz\MusicBrainz;
     use MusicBrainz\Filters\RecordingFilter;
+    use Guzzle\Http\Client;
     
     require __DIR__ . '/vendor/autoload.php';
-    
-    $brainz = new MusicBrainz('username', 'password');
+
+    $brainz = new MusicBrainz(new Client(), 'username', 'password');
     $brainz->setUserAgent('ApplicationName', '0.1', 'http://example.com');
-    
+
     $args = array(
         "recording"  => "Buddy Holly",
         "artist"     => 'Weezer',
@@ -32,7 +33,7 @@ This project is a fork of https://github.com/chrisdawson/MusicBrainz and takes s
 ?>
 ```
 
-Look in the /examples folder for more.
+Look in the [/examples](https://github.com/mikealmond/MusicBrainz/tree/master/examples) folder for more.
 
 ## Requirements
 PHP5 and [cURL extension](http://php.net/manual/en/book.curl.php).
