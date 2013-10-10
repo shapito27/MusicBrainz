@@ -35,7 +35,12 @@ abstract class AbstractFilter
                     if ($params['query'] != '') {
                         $params['query'] .= '+AND+';
                     }
-                    $params['query'] .= $key . ':' .  urlencode(preg_replace('/([\+\-\!\(\)\{\}\[\]\^\~\*\?\:\\\\])/', '/$1', $val));
+                    if ($key == 'arid')
+                    {
+                        $params['query'] .= $key . ':' . $val;
+                    } else {
+                        $params['query'] .= $key . ':' .  urlencode(preg_replace('/([\+\-\!\(\)\{\}\[\]\^\~\*\?\:\\\\])/', '/$1', $val));
+                    }
                 }
             }
         }
