@@ -30,7 +30,7 @@ class Artist
         $this->sortName  = isset($artist['sort-name']) ? (string) $artist['sort-name'] : '';
         $this->gender    = isset($artist['gender']) ? (string) $artist['gender'] : '';
         $this->country   = isset($artist['country']) ? (string) $artist['country'] : '';
-        $this->beginDate = isset($artist['life-span']) ? (string) $artist['life-span']['begin'] : '';
-        $this->endDate   = isset($artist['life-span']) ? (string) $artist['life-span']['ended'] : '';
+        $this->beginDate = isset($artist['life-span']['begin']) ? (string) $artist['life-span']['begin'] : '';
+        $this->endDate   = isset($artist['life-span']['ended']) ? (string) $artist['life-span']['ended'] : '';
     }
 }
