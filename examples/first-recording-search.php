@@ -10,7 +10,7 @@ require dirname(__DIR__) . '/vendor/autoload.php';
 $brainz = new MusicBrainz(new Client(), 'username', 'password');
 $brainz->setUserAgent('ApplicationName', '0.2', 'http://example.com');
 
-// set some defaults
+// set defaults
 $releaseDate    = new DateTime();
 $artistId       = null;
 $songId         = null;
@@ -19,14 +19,14 @@ $albumName      = '';
 $lastScore      = null;
 $firstRecording = array(
     'release'     => null,
-    'relaseDate'  => new DateTime(),
+    'releaseDate' => new DateTime(),
     'recording'   => null,
     'artistId'    => null,
     'recordingId' => null,
     'trackLength' => null
 );
 
-
+// Set the search arguments to pass into the RecordingFilter
 $args = array(
     "recording" => 'we will rock you',
     "artist"    => 'Queen',
@@ -34,6 +34,7 @@ $args = array(
     'country'   => 'GB'
 );
 try {
+    // Find all the recordings that match the search and loop through them
     $recordings = $brainz->search(new RecordingFilter($args));
 
     /** @var $recording \MusicBrainz\Recording */
@@ -50,12 +51,12 @@ try {
         $oldestReleaseKey = key($releaseDates);
 
         if (strtoupper($recording->getArtist()->getName()) == strtoupper($args['artist'])
-            && $releaseDates[$oldestReleaseKey] < $releaseDate
+            && $releaseDates[$oldestReleaseKey] < $firstRecording['releaseDate']
         ) {
 
             $firstRecording = array(
                 'release'     => $recording->releases[$oldestReleaseKey],
-                'relaseDate'  => $recording->releases[$oldestReleaseKey]->getReleaseDate(),
+                'releaseDate' => $recording->releases[$oldestReleaseKey]->getReleaseDate(),
                 'recording'   => $recording,
                 'artistId'    => $recording->getArtist()->getId(),
                 'recordingId' => $recording->getId(),
