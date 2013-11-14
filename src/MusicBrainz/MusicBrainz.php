@@ -301,7 +301,7 @@ class MusicBrainz
      * @throws Exception
      * @internal param array $inc
      *
-     * @return object | bool
+     * @return array
      */
     public function lookup($entity, $mbid, array $includes = array())
     {

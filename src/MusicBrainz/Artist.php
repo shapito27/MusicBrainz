@@ -47,7 +47,7 @@ class Artist
     /**
      * @var array
      */
-    private $data;;
+    private $data;
     /**
      * @var array
      */
