@@ -2,6 +2,8 @@
 
 namespace MusicBrainz\Filters;
 
+use MusicBrainz\Exception;
+use MusicBrainz\MusicBrainz;
 use MusicBrainz\Recording;
 
 /**
@@ -9,8 +11,7 @@ use MusicBrainz\Recording;
  * an array of valid argument types to be used
  * when querying the MusicBrainz web service.
  */
-class RecordingFilter extends AbstractFilter implements FilterInterface
-{
+class RecordingFilter extends AbstractFilter implements FilterInterface {
     public $validArgTypes =
         array(
             'arid',
@@ -43,25 +44,36 @@ class RecordingFilter extends AbstractFilter implements FilterInterface
             'type'
         );
 
-    public function getEntity()
-    {
+    /**
+     * @return string
+     */
+    public function getEntity() {
         return 'recording';
     }
 
-    public function parseResponse(array $response)
-    {
+    /**
+     * @param array       $response
+     * @param MusicBrainz $brainz
+     *
+     * @return array
+     */
+    public function parseResponse(array $response, MusicBrainz $brainz) {
         $recordings = array();
+
         if (isset($response['recording'])) {
             foreach ($response['recording'] as $recording) {
-                $recordings[] = new Recording($recording);
+                $recordings[] = new Recording($recording, $brainz);
             }
         } elseif (isset($response['recordings'])) {
             foreach ($response['recordings'] as $recording) {
-                $recordings[] = new Recording($recording);
+                $recordings[] = new Recording($recording, $brainz);
             }
+        }
+
+        if (empty($recordings)) {
+            throw new Exception('No search results found');
         }
 
         return $recordings;
     }
-
 }

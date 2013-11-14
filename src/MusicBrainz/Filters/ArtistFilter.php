@@ -3,14 +3,14 @@
 namespace MusicBrainz\Filters;
 
 use MusicBrainz\Artist;
+use MusicBrainz\MusicBrainz;
 
 /**
  * This is the artist filter and it contains
  * an array of valid argument types to be used
  * when querying the MusicBrainz web service.
  */
-class ArtistFilter extends AbstractFilter implements FilterInterface
-{
+class ArtistFilter extends AbstractFilter implements FilterInterface {
     protected $validArgTypes =
         array(
             'arid',
@@ -29,21 +29,28 @@ class ArtistFilter extends AbstractFilter implements FilterInterface
             'type'
         );
 
-    public function getEntity()
-    {
+    /**
+     * @return string
+     */
+    public function getEntity() {
         return 'artist';
     }
 
-    public function parseResponse(array $response)
-    {
+    /**
+     * @param array       $response
+     * @param MusicBrainz $brainz
+     *
+     * @return array
+     */
+    public function parseResponse(array $response, MusicBrainz $brainz) {
         $artists = array();
         if (isset($response['artist'])) {
             foreach ($response['artist'] as $artist) {
-                $artists[] = new Artist($artist);
+                $artists[] = new Artist($artist, $brainz);
             }
         } elseif (isset($response['artists'])) {
             foreach ($response['artists'] as $artist) {
-                $artists[] = new Artist($artist);
+                $artists[] = new Artist($artist, $brainz);
             }
         }
 

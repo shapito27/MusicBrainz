@@ -13,11 +13,16 @@ class Tag
 
     private $data;
 
-    public function __construct(array $tag)
+    /**
+     * @param array       $tag
+     * @param MusicBrainz $brainz
+     */
+    public function __construct(array $tag, MusicBrainz $brainz)
     {
-        $this->data = $tag;
+        $this->data   = $tag;
+        $this->brainz = $brainz;
 
-        $this->name  = isset($tag['name']) ? (string) $tag['name'] : '';
-        $this->score = isset($tag['score']) ? (string) $tag['score'] : '';
+        $this->name  = isset($tag['name']) ? (string)$tag['name'] : '';
+        $this->score = isset($tag['score']) ? (string)$tag['score'] : '';
     }
 }

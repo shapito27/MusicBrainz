@@ -15,9 +15,8 @@ class MusicBrainz
 {
 
     const URL = 'http://musicbrainz.org/ws/2';
-
     private static $validIncludes = array(
-        'artist'=> array(
+        'artist'        => array(
             "recordings",
             "releases",
             "release-groups",
@@ -39,10 +38,8 @@ class MusicBrainz
             "work-rels",
             "annotation"
         ),
-        'annotation'=> array(
-
-        ),
-        'label'=> array(
+        'annotation'    => array(),
+        'label'         => array(
             "releases",
             "discids",
             "media",
@@ -60,7 +57,7 @@ class MusicBrainz
             "work-rels",
             "annotation"
         ),
-        'recording'=> array(
+        'recording'     => array(
             "artists",
             "releases", # Subqueries
             "discids",
@@ -80,7 +77,7 @@ class MusicBrainz
             "annotation",
             "aliases"
         ),
-        'release'=> array(
+        'release'       => array(
             "artists",
             "labels",
             "recordings",
@@ -103,7 +100,7 @@ class MusicBrainz
             "annotation",
             "aliases"
         ),
-        'release-group'=> array(
+        'release-group' => array(
             "artists",
             "releases",
             "discids",
@@ -123,13 +120,13 @@ class MusicBrainz
             "annotation",
             "aliases"
         ),
-        'work'=> array(
-            "artists", # Subqueries
+        'work'          => array(
+            "artists", # Sub queries
             "aliases",
             "tags",
             "user-tags",
             "ratings",
-            "user-ratings", # misc
+            "user-ratings", # Misc
             "artist-rels",
             "label-rels",
             "recording-rels",
@@ -139,7 +136,7 @@ class MusicBrainz
             "work-rels",
             "annotation"
         ),
-        'discid'=> array(
+        'discid'        => array(
             "artists",
             "labels",
             "recordings",
@@ -160,34 +157,33 @@ class MusicBrainz
             "recording-level-rels",
             "work-level-rels"
         ),
-        'echoprint'=> array(
+        'echoprint'     => array(
             "artists",
             "releases"
         ),
-        'puid'=> array(
+        'puid'          => array(
             "artists",
             "releases",
             "puids",
             "echoprints",
             "isrcs"
         ),
-        'isrc'=> array(
+        'isrc'          => array(
             "artists",
             "releases",
             "puids",
             "echoprints",
             "isrcs"
         ),
-        'iswc'=> array(
+        'iswc'          => array(
             "artists"
         ),
-        'collection'=> array(
+        'collection'    => array(
             'releases'
         )
     );
-
     private static $validBrowseIncludes = array(
-        'release'=> array(
+        'release'       => array(
             "artist-credits",
             "labels",
             "recordings",
@@ -202,28 +198,28 @@ class MusicBrainz
             "url-rels",
             "work-rels"
         ),
-        'recording'=> array(
+        'recording'     => array(
             "artist-credits",
             "tags",
             "ratings",
             "user-tags",
             "user-ratings"
         ),
-        'label'=> array(
+        'label'         => array(
             "aliases",
             "tags",
             "ratings",
             "user-tags",
             "user-ratings"
         ),
-        'artist'=> array(
+        'artist'        => array(
             "aliases",
             "tags",
             "ratings",
             "user-tags",
             "user-ratings"
         ),
-        'release-group'=> array(
+        'release-group' => array(
             "artist-credits",
             "tags",
             "ratings",
@@ -245,31 +241,26 @@ class MusicBrainz
         "remix",
         "other"
     );
-
     private static $validReleaseStatuses = array(
         "official",
         "promotion",
         "bootleg",
         "pseudo-release"
     );
-
     private $userAgent = 'MusicBrainz PHP Api/0.1.0';
     private $userAgentClient = 'MusicBrainz PHP Api-0.1.0';
-
     /**
      * The username a MusicBrainz user. Used for authentication.
      *
      * @var string
      */
     private $user = null;
-
     /**
      * The password of a MusicBrainz user. Used for authentication.
      *
      * @var string
      */
     private $password = null;
-
     /**
      * The Guzzle client used to make cURL requests
      *
@@ -296,7 +287,6 @@ class MusicBrainz
         if (null != $password) {
             $this->setPassword($password);
         }
-
     }
 
     /**
@@ -304,9 +294,13 @@ class MusicBrainz
      *
      * http://musicbrainz.org/doc/XML_Web_Service
      *
-     * @param $entity
-     * @param $mbid Music Brainz ID
-     * @param  array  $inc
+     * @param string $entity
+     * @param string $mbid Music Brainz ID
+     * @param array  $includes
+     *
+     * @throws Exception
+     * @internal param array $inc
+     *
      * @return object | bool
      */
     public function lookup($entity, $mbid, array $includes = array())
@@ -330,8 +324,148 @@ class MusicBrainz
         return $response;
     }
 
-    protected function browse(Filters\FilterInterface $filter, $entity, $mbid, array $includes, $limit = 25, $offset = null, $releaseType = array(), $releaseStatus = array())
+    /**
+     * Check the list of allowed entities
+     *
+     * @param $entity
+     *
+     * @return bool
+     */
+    private function isValidEntity($entity)
     {
+        return array_key_exists($entity, self::$validIncludes);
+    }
+
+    /**
+     * @param $includes
+     * @param $validIncludes
+     *
+     * @return bool
+     * @throws \OutOfBoundsException
+     */
+    public function validateInclude($includes, $validIncludes)
+    {
+        foreach ($includes as $include) {
+            if (!in_array($include, $validIncludes)) {
+                throw new \OutOfBoundsException(sprintf('%s is not a valid include', $include));
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Some calls require authentication
+     *
+     * @param $entity
+     * @param $includes
+     *
+     * @return bool
+     */
+    protected function isAuthRequired($entity, $includes)
+    {
+        if (in_array('user-tags', $includes) || in_array('user-ratings', $includes)) {
+            return true;
+        }
+
+        if (substr($entity, 0, strlen('collection')) === 'collection') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Perform a cUrl call based on a path and parameters using
+     * HTTP Digest for POST and certain GET calls (user-ratings, etc)
+     * Ask for JSON to be returned instead of XML and set the user agent
+     * based on MusicBrainz::setUserAgent
+     *
+     * @param  string $path
+     * @param  array  $params
+     * @param  string $method GET|POST
+     *
+     * @param bool    $isAuthRequired
+     *
+     * @throws Exception
+     * @return array
+     */
+    private function call($path, array $params = array(), $method = 'GET', $isAuthRequired = false)
+    {
+
+        if ($this->userAgent == '') {
+            throw new Exception('You must set a valid User Agent before accessing the MusicBrainz API');
+        }
+
+        $this->client->setBaseUrl(self::URL);
+        $this->client->setConfig(
+            array(
+                'data' => $params
+            )
+        );
+
+        $request = $this->client->get($path . '{?data*}');
+        $request->setHeader('Accept', 'application/json');
+        $request->setHeader('User-Agent', $this->userAgent);
+
+        if ($isAuthRequired) {
+            if ($this->user != null && $this->password != null) {
+                $request->setAuth($this->user, $this->password, CURLAUTH_DIGEST);
+            } else {
+                throw new Exception('Authentication is required');
+            }
+        }
+
+        $request->getQuery()->useUrlEncoding(false);
+
+        // musicbrainz throttle
+        sleep(1);
+
+        return $request->send()->json();
+    }
+
+    /**
+     * @param       $entity
+     * @param       $mbid
+     * @param array $includes
+     * @param int   $limit
+     * @param null  $offset
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function browseArtist($entity, $mbid, array $includes = array(), $limit = 25, $offset = null)
+    {
+        if (!in_array($entity, array('recording', 'release', 'release-group'))) {
+            throw new Exception('Invalid browse entity for artist');
+        }
+
+        return $this->browse(new Filters\ArtistFilter(array()), $entity, $mbid, $includes, $limit, $offset);
+    }
+
+    /**
+     * @param Filters\FilterInterface $filter
+     * @param                         $entity
+     * @param                         $mbid
+     * @param array                   $includes
+     * @param int                     $limit
+     * @param null                    $offset
+     * @param array                   $releaseType
+     * @param array                   $releaseStatus
+     *
+     * @return array
+     * @throws Exception
+     */
+    protected function browse(
+        Filters\FilterInterface $filter,
+        $entity,
+        $mbid,
+        array $includes,
+        $limit = 25,
+        $offset = null,
+        $releaseType = array(),
+        $releaseStatus = array()
+    ) {
         if (!$this->isValidMBID($mbid)) {
             throw new Exception('Invalid Music Brainz ID');
         }
@@ -344,7 +478,7 @@ class MusicBrainz
 
         $authRequired = $this->isAuthRequired($filter->getEntity(), $includes);
 
-        $params  = $this->getBrowseFilterParams($filter->getEntity(), $includes, $releaseType, $releaseStatus);
+        $params = $this->getBrowseFilterParams($filter->getEntity(), $includes, $releaseType, $releaseStatus);
         $params += array(
             $entity  => $mbid,
             'inc'    => implode('+', $includes),
@@ -358,15 +492,93 @@ class MusicBrainz
         return $response;
     }
 
-    public function browseArtist($entity, $mbid, array $includes = array(), $limit = 25, $offset = null)
+    /**
+     * @param $mbid
+     *
+     * @return int
+     */
+    public function isValidMBID($mbid)
     {
-        if (!in_array($entity, array('recording', 'release', 'release-group'))) {
-            throw new Exception('Invalid browse entity for artist');
-        }
-
-        return $this->browse(new Filters\ArtistFilter(array()), $entity, $mbid, $includes, $limit, $offset);
+        return preg_match("/^(\{)?[a-f\d]{8}(-[a-f\d]{4}){4}[a-f\d]{8}(?(1)\})$/i", $mbid);
     }
 
+    /**
+     * Check that the status or type values are valid. Then, check that
+     * the filters can be used with the given includes.
+     *
+     * @param  string $entity
+     * @param  array  $includes
+     * @param  array  $releaseType
+     * @param  array  $releaseStatus
+     *
+     * @throws Exception
+     * @return array
+     */
+    public function getBrowseFilterParams(
+        $entity,
+        $includes,
+        array $releaseType = array(),
+        array $releaseStatus = array()
+    ) {
+        //$this->validateFilter(array($entity), self::$validIncludes);
+        $this->validateFilter($releaseStatus, self::$validReleaseStatuses);
+        $this->validateFilter($releaseType, self::$validReleaseTypes);
+
+        if (!empty($releaseStatus)
+            && !in_array('releases', $includes)
+        ) {
+            throw new Exception("Can't have a status with no release include");
+        }
+
+        if (!empty($releaseType)
+            && !in_array('release-groups', $includes)
+            && !in_array('releases', $includes)
+            && $entity != 'release-group'
+        ) {
+            throw new Exception("Can't have a release type with no release-group include");
+        }
+
+        $params = array();
+
+        if (!empty($releaseType)) {
+            $params['type'] = implode('|', $releaseType);
+        }
+
+        if (!empty($releaseStatus)) {
+            $params['status'] = implode('|', $releaseStatus);
+        }
+
+        return $params;
+    }
+
+    /**
+     * @param $values
+     * @param $valid
+     *
+     * @return bool
+     * @throws Exception
+     */
+    public function validateFilter($values, $valid)
+    {
+        foreach ($values as $value) {
+            if (!in_array($value, $valid)) {
+                throw new Exception(sprintf('%s is not a valid filter', $value));
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param       $entity
+     * @param       $mbid
+     * @param array $includes
+     * @param int   $limit
+     * @param null  $offset
+     *
+     * @return array
+     * @throws Exception
+     */
     public function browseLabel($entity, $mbid, array $includes, $limit = 25, $offset = null)
     {
         if (!in_array($entity, array('release'))) {
@@ -376,6 +588,16 @@ class MusicBrainz
         return $this->browse(new Filters\LabelFilter(array()), $entity, $mbid, $includes, $limit, $offset);
     }
 
+    /**
+     * @param       $entity
+     * @param       $mbid
+     * @param array $includes
+     * @param int   $limit
+     * @param null  $offset
+     *
+     * @return array
+     * @throws Exception
+     */
     public function browseRecording($entity, $mbid, array $includes = array(), $limit = 25, $offset = null)
     {
         if (!in_array($entity, array('artist', 'release'))) {
@@ -385,8 +607,27 @@ class MusicBrainz
         return $this->browse(new Filters\RecordingFilter(array()), $entity, $mbid, $includes, $limit, $offset);
     }
 
-    public function browseRelease($entity, $mbid, array $includes = array(), $limit = 25, $offset = null, $releaseType = array(), $releaseStatus = array())
-    {
+    /**
+     * @param       $entity
+     * @param       $mbid
+     * @param array $includes
+     * @param int   $limit
+     * @param null  $offset
+     * @param array $releaseType
+     * @param array $releaseStatus
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function browseRelease(
+        $entity,
+        $mbid,
+        array $includes = array(),
+        $limit = 25,
+        $offset = null,
+        $releaseType = array(),
+        $releaseStatus = array()
+    ) {
         if (!in_array($entity, array('artist', 'label', 'recording', 'release-group'))) {
             throw new Exception('Invalid browse entity for release');
         }
@@ -394,9 +635,26 @@ class MusicBrainz
         return $this->browse(new Filters\ReleaseFilter(array()), $entity, $mbid, $includes, $limit, $offset);
     }
 
-    public function browseReleaseGroup($entity, $mbid, $limit = 25, $offset = null, array $includes, $releaseType = array())
-    {
-        if (!in_array($entity, array('arist', 'release'))) {
+    /**
+     * @param       $entity
+     * @param       $mbid
+     * @param int   $limit
+     * @param null  $offset
+     * @param array $includes
+     * @param array $releaseType
+     *
+     * @return array
+     * @throws Exception
+     */
+    public function browseReleaseGroup(
+        $entity,
+        $mbid,
+        $limit = 25,
+        $offset = null,
+        array $includes,
+        $releaseType = array()
+    ) {
+        if (!in_array($entity, array('artist', 'release'))) {
             throw new Exception('Invalid browse entity for release group');
         }
 
@@ -414,7 +672,13 @@ class MusicBrainz
      * to return complete information about a release. This method returns an array of
      * objects that are possible matches.
      *
-     * @param  \MusicBrainz\Filters\FilterInterface $trackFilter
+     * @param Filters\FilterInterface $filter
+     * @param int                     $limit
+     * @param null|int                $offset
+     *
+     * @throws Exception
+     * @internal param \MusicBrainz\Filters\FilterInterface $trackFilter
+     *
      * @return array
      */
     public function search(Filters\FilterInterface $filter, $limit = 25, $offset = null)
@@ -431,162 +695,7 @@ class MusicBrainz
 
         $response = $this->call($filter->getEntity() . '/', $params);
 
-        return $filter->parseResponse($response);
-
-    }
-
-    /**
-     * Perform a cUrl call based on a path and paramaters using
-     * HTTP Digest for POST and certain GET calls (user-ratings, etc)
-     * Ask for JSON to be returned instead of XML and set the user agent
-     * based on MusicBrainz::setUserAgent
-     *
-     * @param  string $path
-     * @param  array  $params
-     * @param  string $method GET|POST
-     * @return array
-     */
-    private function call($path, array $params = array(), $method = 'GET', $isAuthRequred = false)
-    {
-
-        if ($this->userAgent == '') {
-            throw new Exception('You must set a valid User Agent before accessing the MusicBrainz API');
-        }
-
-        $this->client->setBaseUrl(self::URL);
-        $this->client->setConfig(array(
-            'data' => $params
-        ));
-
-        $request = $this->client->get($path . '{?data*}');
-        $request->setHeader('Accept', 'application/json');
-        $request->setHeader('User-Agent', $this->userAgent);
-
-        if ($isAuthRequred) {
-            if ($this->user != null && $this->password != null) {
-                $request->setAuth($this->user, $this->password, CURLAUTH_DIGEST);
-            } else {
-                throw new Exception('Authentication is required');
-            }
-        }
-
-        $request->getQuery()->useUrlEncoding(false);
-
-        return $request->send()->json();
-    }
-
-    /**
-     * Check that the status or type values are valid. Then, check that
-     * the filters can be used with the given includes.
-     *
-     * @param  string $entity
-     * @param  array  $includes
-     * @param  array  $releaseType
-     * @param  array  $releaseStatus
-     * @return array
-     */
-    public function getBrowseFilterParams($entity, $includes, array $releaseType = array(), array $releaseStatus = array())
-    {
-        //$this->validateFilter(array($entity), self::$validIncludes);
-        $this->validateFilter($releaseStatus, self::$validReleaseStatuses);
-        $this->validateFilter($releaseType, self::$validReleaseTypes);
-
-        if (!empty($releaseStatus)
-            && !in_array('releases', $includes)) {
-            throw new Exception("Can't have a status with no release include");
-        }
-
-        if (!empty($releaseType)
-            && !in_array('release-groups', $includes)
-            && !in_array('releases', $includes)
-            && $entity != 'release-group') {
-            throw new Exception("Can't have a release type with no release-group include");
-        }
-
-        $params = array();
-
-        if (!empty($releaseType)) {
-            $params['type'] = implode('|', $releaseType);
-        }
-
-        if (!empty($releaseStatus)) {
-            $params['status'] = implode('|', $releaseStatus);
-        }
-
-        return $params;
-    }
-
-    public function isValidMBID($mbid)
-    {
-        return preg_match("/^(\{)?[a-f\d]{8}(-[a-f\d]{4}){4}[a-f\d]{8}(?(1)\})$/i", $mbid);
-    }
-
-    public function validateInclude($includes, $validIncludes)
-    {
-        foreach ($includes as $include) {
-            if (!in_array($include, $validIncludes)) {
-                throw new \OutOfBoundsException(sprintf('%s is not a valid include', $include));
-            }
-        }
-
-        return true;
-    }
-
-    public function validateFilter($values, $valid)
-    {
-        foreach ($values as $value) {
-            if (!in_array($value, $valid)) {
-                throw new Exception(sprintf('%s is not a valid filter', $value));
-            }
-        }
-
-        return true;
-    }
-    /**
-     * Some calls require authentication
-     * @return bool
-     */
-    protected function isAuthRequired($entity, $includes)
-    {
-        if (in_array('user-tags', $includes) || in_array('user-ratings', $includes)) {
-            return true;
-        }
-
-        if (substr($entity, 0, strlen('collection')) === 'collection') {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Check the list of allowed entities
-     *
-     * @param $entity
-     * @return bool
-     */
-    private function isValidEntity($entity)
-    {
-        return array_key_exists($entity, self::$validIncludes);
-    }
-
-    /**
-     * Set the user agent for POST requests (and GET requests for user tags)
-     *
-     * @param $application The name of the application using this library
-     * @param $version The version of the application using this library
-     * @param $contactInfo E-mail or website of the application
-     * @throws Exception
-     */
-    public function setUserAgent($application, $version, $contactInfo)
-    {
-        if (strpos($version, '-') !== false) {
-            throw new Exception('User agent: version should not contain a "-" character.');
-        }
-
-        $this->userAgent       = $application . '/' . $version . ' (' . $contactInfo . ')';
-        $this->userAgentClient = $application . '-' . $version;
-
+        return $filter->parseResponse($response, $this);
     }
 
     /**
@@ -600,9 +709,38 @@ class MusicBrainz
     }
 
     /**
+     * Set the user agent for POST requests (and GET requests for user tags)
+     *
+     * @param string $application The name of the application using this library
+     * @param string $version The version of the application using this library
+     * @param string $contactInfo E-mail or website of the application
+     *
+     * @throws Exception
+     */
+    public function setUserAgent($application, $version, $contactInfo)
+    {
+        if (strpos($version, '-') !== false) {
+            throw new Exception('User agent: version should not contain a "-" character.');
+        }
+
+        $this->userAgent       = $application . '/' . $version . ' (' . $contactInfo . ')';
+        $this->userAgentClient = $application . '-' . $version;
+    }
+
+    /**
+     * Returns the MusicBrainz user
+     *
+     * @return null|string
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
      * Sets the MusicBrainz user
      *
-     * @param string $email
+     * @param string $user
      */
     public function setUser($user)
     {
@@ -610,13 +748,13 @@ class MusicBrainz
     }
 
     /**
-     * Returns the MusicBrainz user
+     * Returns the user’s password
      *
-     * @return string
+     * @return null|string
      */
-    public function getUser()
+    public function getPassword()
     {
-        return $this->user;
+        return $this->password;
     }
 
     /**
@@ -628,15 +766,4 @@ class MusicBrainz
     {
         $this->password = $password;
     }
-
-    /**
-     * Returns the user’s password
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
 }

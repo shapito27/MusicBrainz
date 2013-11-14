@@ -3,6 +3,7 @@
 namespace MusicBrainz\Filters;
 
 use MusicBrainz\Label;
+use MusicBrainz\MusicBrainz;
 
 /**
  * This is the label filter and it contains
@@ -29,17 +30,26 @@ class LabelFilter extends AbstractFilter implements FilterInterface
             'type'
         );
 
+    /**
+     * @return string
+     */
     public function getEntity()
     {
         return 'label';
     }
 
-    public function parseResponse(array $response)
+    /**
+     * @param array       $response
+     * @param MusicBrainz $brainz
+     *
+     * @return array
+     */
+    public function parseResponse(array $response, MusicBrainz $brainz)
     {
         $labels = array();
 
         foreach ($response['labels'] as $label) {
-            $labels[] = new Label($label);
+            $labels[] = new Label($label, $brainz);
         }
 
         return $labels;
