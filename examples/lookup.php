@@ -1,14 +1,14 @@
 <pre><?php
 
 use Guzzle\Http\Client;
+use MusicBrainz\Clients\GuzzleMbClient;
 use MusicBrainz\MusicBrainz;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-//Create new MusicBrainz object
-$brainz = new MusicBrainz(new Client(), 'username', 'password');
+// Create new MusicBrainz object
+$brainz = new MusicBrainz(new GuzzleMbClient(new Client()), 'username', 'password');
 $brainz->setUserAgent('ApplicationName', '0.2', 'http://example.com');
-
 
 /**
  * Lookup an Artist and include a list of Releases, Recordings, Release Groups and User Ratings

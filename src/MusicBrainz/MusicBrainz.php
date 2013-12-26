@@ -2,7 +2,7 @@
 
 namespace MusicBrainz;
 
-use Guzzle\Http\ClientInterface;
+use MusicBrainz\Clients\MbClient;
 
 /**
  * Connect to the MusicBrainz web service
@@ -13,8 +13,6 @@ use Guzzle\Http\ClientInterface;
  */
 class MusicBrainz
 {
-
-    const URL = 'http://musicbrainz.org/ws/2';
     private static $validIncludes = array(
         'artist'        => array(
             "recordings",
@@ -262,9 +260,9 @@ class MusicBrainz
      */
     private $password = null;
     /**
-     * The Guzzle client used to make cURL requests
+     * The client used to make requests
      *
-     * @var \Guzzle\Http\ClientInterface
+     * @var \MusicBrainz\Clients\MbClient
      */
     private $client;
 
@@ -272,11 +270,11 @@ class MusicBrainz
      * Initializes the class. You can pass the user’s username and password
      * However, you can modify or add all values later.
      *
-     * @param \Guzzle\Http\ClientInterface $client   The Guzzle client used to make requests
-     * @param string                       $user
-     * @param string                       $password
+     * @param \MusicBrainz\Clients\MbClient $client The client used to make requests
+     * @param string                        $user
+     * @param string                        $password
      */
-    public function __construct(ClientInterface $client, $user = null, $password = null)
+    public function __construct(MbClient $client, $user = null, $password = null)
     {
         $this->client = $client;
 
@@ -319,128 +317,9 @@ class MusicBrainz
             'fmt' => 'json'
         );
 
-        $response = $this->call($entity . '/' . $mbid, $params, 'GET', $authRequired);
+        $response = $this->client->call($entity . '/' . $mbid, $params, $this->get_call_options(), $authRequired);
 
         return $response;
-    }
-
-    /**
-     * Check the list of allowed entities
-     *
-     * @param $entity
-     *
-     * @return bool
-     */
-    private function isValidEntity($entity)
-    {
-        return array_key_exists($entity, self::$validIncludes);
-    }
-
-    /**
-     * @param $includes
-     * @param $validIncludes
-     *
-     * @return bool
-     * @throws \OutOfBoundsException
-     */
-    public function validateInclude($includes, $validIncludes)
-    {
-        foreach ($includes as $include) {
-            if (!in_array($include, $validIncludes)) {
-                throw new \OutOfBoundsException(sprintf('%s is not a valid include', $include));
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Some calls require authentication
-     *
-     * @param $entity
-     * @param $includes
-     *
-     * @return bool
-     */
-    protected function isAuthRequired($entity, $includes)
-    {
-        if (in_array('user-tags', $includes) || in_array('user-ratings', $includes)) {
-            return true;
-        }
-
-        if (substr($entity, 0, strlen('collection')) === 'collection') {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Perform a cUrl call based on a path and parameters using
-     * HTTP Digest for POST and certain GET calls (user-ratings, etc)
-     * Ask for JSON to be returned instead of XML and set the user agent
-     * based on MusicBrainz::setUserAgent
-     *
-     * @param  string $path
-     * @param  array  $params
-     * @param  string $method GET|POST
-     *
-     * @param bool    $isAuthRequired
-     *
-     * @throws Exception
-     * @return array
-     */
-    private function call($path, array $params = array(), $method = 'GET', $isAuthRequired = false)
-    {
-
-        if ($this->userAgent == '') {
-            throw new Exception('You must set a valid User Agent before accessing the MusicBrainz API');
-        }
-
-        $this->client->setBaseUrl(self::URL);
-        $this->client->setConfig(
-            array(
-                'data' => $params
-            )
-        );
-
-        $request = $this->client->get($path . '{?data*}');
-        $request->setHeader('Accept', 'application/json');
-        $request->setHeader('User-Agent', $this->userAgent);
-
-        if ($isAuthRequired) {
-            if ($this->user != null && $this->password != null) {
-                $request->setAuth($this->user, $this->password, CURLAUTH_DIGEST);
-            } else {
-                throw new Exception('Authentication is required');
-            }
-        }
-
-        $request->getQuery()->useUrlEncoding(false);
-
-        // musicbrainz throttle
-        sleep(1);
-
-        return $request->send()->json();
-    }
-
-    /**
-     * @param       $entity
-     * @param       $mbid
-     * @param array $includes
-     * @param int   $limit
-     * @param null  $offset
-     *
-     * @return array
-     * @throws Exception
-     */
-    public function browseArtist($entity, $mbid, array $includes = array(), $limit = 25, $offset = null)
-    {
-        if (!in_array($entity, array('recording', 'release', 'release-group'))) {
-            throw new Exception('Invalid browse entity for artist');
-        }
-
-        return $this->browse(new Filters\ArtistFilter(array()), $entity, $mbid, $includes, $limit, $offset);
     }
 
     /**
@@ -487,86 +366,28 @@ class MusicBrainz
             'fmt'    => 'json'
         );
 
-        $response = $this->call($filter->getEntity() . '/', $params, 'GET', $authRequired);
+        $response = $this->client->call($filter->getEntity() . '/', $params, $this->get_call_options(), $authRequired);
 
         return $response;
     }
 
     /**
-     * @param $mbid
+     * @param       $entity
+     * @param       $mbid
+     * @param array $includes
+     * @param int   $limit
+     * @param null  $offset
      *
-     * @return int
-     */
-    public function isValidMBID($mbid)
-    {
-        return preg_match("/^(\{)?[a-f\d]{8}(-[a-f\d]{4}){4}[a-f\d]{8}(?(1)\})$/i", $mbid);
-    }
-
-    /**
-     * Check that the status or type values are valid. Then, check that
-     * the filters can be used with the given includes.
-     *
-     * @param  string $entity
-     * @param  array  $includes
-     * @param  array  $releaseType
-     * @param  array  $releaseStatus
-     *
-     * @throws Exception
      * @return array
-     */
-    public function getBrowseFilterParams(
-        $entity,
-        $includes,
-        array $releaseType = array(),
-        array $releaseStatus = array()
-    ) {
-        //$this->validateFilter(array($entity), self::$validIncludes);
-        $this->validateFilter($releaseStatus, self::$validReleaseStatuses);
-        $this->validateFilter($releaseType, self::$validReleaseTypes);
-
-        if (!empty($releaseStatus)
-            && !in_array('releases', $includes)
-        ) {
-            throw new Exception("Can't have a status with no release include");
-        }
-
-        if (!empty($releaseType)
-            && !in_array('release-groups', $includes)
-            && !in_array('releases', $includes)
-            && $entity != 'release-group'
-        ) {
-            throw new Exception("Can't have a release type with no release-group include");
-        }
-
-        $params = array();
-
-        if (!empty($releaseType)) {
-            $params['type'] = implode('|', $releaseType);
-        }
-
-        if (!empty($releaseStatus)) {
-            $params['status'] = implode('|', $releaseStatus);
-        }
-
-        return $params;
-    }
-
-    /**
-     * @param $values
-     * @param $valid
-     *
-     * @return bool
      * @throws Exception
      */
-    public function validateFilter($values, $valid)
+    public function browseArtist($entity, $mbid, array $includes = array(), $limit = 25, $offset = null)
     {
-        foreach ($values as $value) {
-            if (!in_array($value, $valid)) {
-                throw new Exception(sprintf('%s is not a valid filter', $value));
-            }
+        if (!in_array($entity, array('recording', 'release', 'release-group'))) {
+            throw new Exception('Invalid browse entity for artist');
         }
 
-        return true;
+        return $this->browse(new Filters\ArtistFilter(array()), $entity, $mbid, $includes, $limit, $offset);
     }
 
     /**
@@ -693,9 +514,152 @@ class MusicBrainz
 
         $params = $filter->createParameters(array('limit' => $limit, 'offset' => $offset, 'fmt' => 'json'));
 
-        $response = $this->call($filter->getEntity() . '/', $params);
+        $response = $this->client->call($filter->getEntity() . '/', $params, $this->get_call_options());
 
         return $filter->parseResponse($response, $this);
+    }
+
+    /**
+     * @param $mbid
+     *
+     * @return int
+     */
+    public function isValidMBID($mbid)
+    {
+        return preg_match("/^(\{)?[a-f\d]{8}(-[a-f\d]{4}){4}[a-f\d]{8}(?(1)\})$/i", $mbid);
+    }
+
+    /**
+     * Check the list of allowed entities
+     *
+     * @param $entity
+     *
+     * @return bool
+     */
+    private function isValidEntity($entity)
+    {
+        return array_key_exists($entity, self::$validIncludes);
+    }
+
+    /**
+     * Some calls require authentication
+     *
+     * @param $entity
+     * @param $includes
+     *
+     * @return bool
+     */
+    protected function isAuthRequired($entity, $includes)
+    {
+        if (in_array('user-tags', $includes) || in_array('user-ratings', $includes)) {
+            return true;
+        }
+
+        if (substr($entity, 0, strlen('collection')) === 'collection') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param $includes
+     * @param $validIncludes
+     *
+     * @return bool
+     * @throws \OutOfBoundsException
+     */
+    public function validateInclude($includes, $validIncludes)
+    {
+        foreach ($includes as $include) {
+            if (!in_array($include, $validIncludes)) {
+                throw new \OutOfBoundsException(sprintf('%s is not a valid include', $include));
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param $values
+     * @param $valid
+     *
+     * @return bool
+     * @throws Exception
+     */
+    public function validateFilter($values, $valid)
+    {
+        foreach ($values as $value) {
+            if (!in_array($value, $valid)) {
+                throw new Exception(sprintf('%s is not a valid filter', $value));
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Check that the status or type values are valid. Then, check that
+     * the filters can be used with the given includes.
+     *
+     * @param  string $entity
+     * @param  array  $includes
+     * @param  array  $releaseType
+     * @param  array  $releaseStatus
+     *
+     * @throws Exception
+     * @return array
+     */
+    public function getBrowseFilterParams(
+        $entity,
+        $includes,
+        array $releaseType = array(),
+        array $releaseStatus = array()
+    ) {
+        //$this->validateFilter(array($entity), self::$validIncludes);
+        $this->validateFilter($releaseStatus, self::$validReleaseStatuses);
+        $this->validateFilter($releaseType, self::$validReleaseTypes);
+
+        if (!empty($releaseStatus)
+            && !in_array('releases', $includes)
+        ) {
+            throw new Exception("Can't have a status with no release include");
+        }
+
+        if (!empty($releaseType)
+            && !in_array('release-groups', $includes)
+            && !in_array('releases', $includes)
+            && $entity != 'release-group'
+        ) {
+            throw new Exception("Can't have a release type with no release-group include");
+        }
+
+        $params = array();
+
+        if (!empty($releaseType)) {
+            $params['type'] = implode('|', $releaseType);
+        }
+
+        if (!empty($releaseStatus)) {
+            $params['status'] = implode('|', $releaseStatus);
+        }
+
+        return $params;
+    }
+
+    /**
+     * @return array
+     */
+    public function get_call_options()
+    {
+        $options = array();
+
+        $options['method']     = 'GET';
+        $options['user-agent'] = $this->getUserAgent();
+        $options['user']       = $this->getUser();
+        $options['password']   = $this->getPassword();
+
+        return $options;
     }
 
     /**

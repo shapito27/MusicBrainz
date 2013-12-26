@@ -14,8 +14,13 @@
         }
     ],
     "require": {
-        "php": ">=5.3.8",
+        "php": ">=5.3.8"
+    },
+    "require-dev": {
         "guzzle/guzzle": "v3.7.2"
+    },
+    "suggest": {
+        "guzzle/guzzle": ""
     },
     "autoload": {
         "psr-0": {

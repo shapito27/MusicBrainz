@@ -1,6 +1,7 @@
 <pre><?php
 
 use Guzzle\Http\Client;
+use MusicBrainz\Clients\GuzzleMbClient;
 use MusicBrainz\Filters\ArtistFilter;
 use MusicBrainz\Filters\LabelFilter;
 use MusicBrainz\Filters\RecordingFilter;
@@ -9,10 +10,9 @@ use MusicBrainz\MusicBrainz;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
-//Create new phpBrainz object
-$brainz = new MusicBrainz(new Client());
+// Create new MusicBrainz object
+$brainz = new MusicBrainz(new GuzzleMbClient(new Client()), 'username', 'password');
 $brainz->setUserAgent('ApplicationName', '0.2', 'http://example.com');
-
 
 /**
  * Get the release groups for an artist
