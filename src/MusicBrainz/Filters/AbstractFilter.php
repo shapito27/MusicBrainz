@@ -46,7 +46,6 @@ abstract class AbstractFilter
      */
     public function createParameters(array $params = array())
     {
-
         $params = $params + array('query' => '');
 
         if (empty($this->validArgs) || $params['query'] != '') {
@@ -61,7 +60,7 @@ abstract class AbstractFilter
             if (!in_array($key, $this->protectedArgs)) {
                 // Lucene escape characters
                 $val = urlencode(
-                    preg_replace('/([\+\-\!\(\)\{\}\[\]\^\~\*\?\:\\\\])/', '/$1', $val)
+                    preg_replace('/([\+\-\!\(\)\{\}\[\]\^\~\*\?\:\\\\])/', '\\\\$1', $val)
                 );
             }
             // If the search string contains a space, wrap it in brackets/quotes
