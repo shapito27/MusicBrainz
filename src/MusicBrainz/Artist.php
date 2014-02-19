@@ -4,7 +4,7 @@ namespace MusicBrainz;
 
 /**
  * Represents a MusicBrainz artist object
- *
+ * @package MusicBrainz
  */
 class Artist
 {

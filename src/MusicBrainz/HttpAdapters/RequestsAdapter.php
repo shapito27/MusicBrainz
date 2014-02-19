@@ -11,13 +11,6 @@ use Requests;
 class RequestsHttpAdapter extends AbstractHttpAdapter
 {
     /**
-     * Initializes the class.
-     */
-    public function __construct()
-    {
-    }
-
-    /**
      * Perform an HTTP request on MusicBrainz
      *
      * @param  string  $path

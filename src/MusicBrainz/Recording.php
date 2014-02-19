@@ -4,14 +4,29 @@ namespace MusicBrainz;
 
 /**
  * Represents a MusicBrainz Recording object
- *
+ * @package MusicBrainz
  */
 class Recording
 {
+    /**
+     * @var string
+     */
     public $id;
+    /**
+     * @var string
+     */
     public $title;
+    /**
+     * @var int
+     */
     public $score;
+    /**
+     * @var Release[]
+     */
     public $releases = array();
+    /**
+     * @var array
+     */
     private $data;
 
     /**

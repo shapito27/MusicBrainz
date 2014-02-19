@@ -8,10 +8,21 @@ namespace MusicBrainz;
  */
 class ReleaseGroup
 {
+    /**
+     * @var string
+     */
     public $id;
-
+    /**
+     * @var array
+     */
     private $data;
+    /**
+     * @var MusicBrainz
+     */
     private $brainz;
+    /**
+     * @var Release[]
+     */
     private $releases = array();
 
     /**
@@ -42,11 +53,17 @@ class ReleaseGroup
         return $this->data['title'];
     }
 
+    /**
+     * @return mixed
+     */
     public function getScore()
     {
         return $this->data['score'];
     }
 
+    /**
+     * @return Release[]
+     */
     public function getReleases()
     {
         if (!empty($this->releases)) {

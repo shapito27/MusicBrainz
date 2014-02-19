@@ -10,6 +10,7 @@ use MusicBrainz\HttpAdapters\AbstractHttpAdapter;
  * http://musicbrainz.org/doc/Development
  *
  * @link http://github.com/mikealmond/musicbrainz
+ * @package MusicBrainz
  */
 class MusicBrainz
 {
@@ -29,7 +30,7 @@ class MusicBrainz
             "tags",
             "user-tags",
             "ratings",
-            "user-ratings", # misc
+            "user-ratings", // misc
             "artist-rels",
             "label-rels",
             "recording-rels",
@@ -48,7 +49,7 @@ class MusicBrainz
             "tags",
             "user-tags",
             "ratings",
-            "user-ratings", # misc
+            "user-ratings", // misc
             "artist-rels",
             "label-rels",
             "recording-rels",
@@ -60,14 +61,14 @@ class MusicBrainz
         ),
         'recording'     => array(
             "artists",
-            "releases", # Subqueries
+            "releases", // sub queries
             "discids",
             "media",
             "artist-credits",
             "tags",
             "user-tags",
             "ratings",
-            "user-ratings", # misc
+            "user-ratings", // misc
             "artist-rels",
             "label-rels",
             "recording-rels",
@@ -110,7 +111,7 @@ class MusicBrainz
             "tags",
             "user-tags",
             "ratings",
-            "user-ratings", # misc
+            "user-ratings", // misc
             "artist-rels",
             "label-rels",
             "recording-rels",
@@ -122,12 +123,12 @@ class MusicBrainz
             "aliases"
         ),
         'work'          => array(
-            "artists", # Sub queries
+            "artists", // sub queries
             "aliases",
             "tags",
             "user-tags",
             "ratings",
-            "user-ratings", # Misc
+            "user-ratings", // misc
             "artist-rels",
             "label-rels",
             "recording-rels",
@@ -467,7 +468,16 @@ class MusicBrainz
             throw new Exception('Invalid browse entity for release');
         }
 
-        return $this->browse(new Filters\ReleaseFilter(array()), $entity, $mbid, $includes, $limit, $offset);
+        return $this->browse(
+                    new Filters\ReleaseFilter(array()),
+                        $entity,
+                        $mbid,
+                        $includes,
+                        $limit,
+                        $offset,
+                        $releaseType,
+                        $releaseStatus
+        );
     }
 
     /**
@@ -493,7 +503,15 @@ class MusicBrainz
             throw new Exception('Invalid browse entity for release group');
         }
 
-        return $this->browse(new Filters\ReleaseGroupFilter(array()), $entity, $mbid, $includes, $limit, $offset);
+        return $this->browse(
+                    new Filters\ReleaseGroupFilter(array()),
+                        $entity,
+                        $mbid,
+                        $includes,
+                        $limit,
+                        $offset,
+                        $releaseType
+        );
     }
 
     /**

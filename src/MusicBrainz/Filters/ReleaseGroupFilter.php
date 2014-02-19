@@ -11,31 +11,32 @@ use MusicBrainz\ReleaseGroup;
  * an array of valid argument types to be used
  * when querying the MusicBrainz web service.
  */
-class ReleaseGroupFilter extends AbstractFilter implements FilterInterface {
-    protected $validArgTypes =
-        array(
-            'arid',
-            'artist',
-            'artistname',
-            'comment',
-            'creditname',
-            'primarytype',
-            'rgid',
-            'releasegroup',
-            'releasegroupaccent',
-            'releases',
-            'release',
-            'reid',
-            'secondarytype',
-            'status',
-            'tag',
-            'type'
-        );
+class ReleaseGroupFilter extends AbstractFilter implements FilterInterface
+{
+    protected $validArgTypes = array(
+        'arid',
+        'artist',
+        'artistname',
+        'comment',
+        'creditname',
+        'primarytype',
+        'rgid',
+        'releasegroup',
+        'releasegroupaccent',
+        'releases',
+        'release',
+        'reid',
+        'secondarytype',
+        'status',
+        'tag',
+        'type'
+    );
 
     /**
      * @return string
      */
-    public function getEntity() {
+    public function getEntity()
+    {
         return 'release-group';
     }
 
@@ -44,9 +45,10 @@ class ReleaseGroupFilter extends AbstractFilter implements FilterInterface {
      * @param MusicBrainz $brainz
      *
      * @throws \MusicBrainz\Exception
-     * @return ReleaseGroup
+     * @return ReleaseGroup[]
      */
-    public function parseResponse(array $response, MusicBrainz $brainz) {
+    public function parseResponse(array $response, MusicBrainz $brainz)
+    {
 
         if (!isset($response['release-groups'])) {
             throw new Exception('No release groups found');

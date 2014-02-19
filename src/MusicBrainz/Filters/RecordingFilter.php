@@ -11,43 +11,44 @@ use MusicBrainz\Recording;
  * an array of valid argument types to be used
  * when querying the MusicBrainz web service.
  */
-class RecordingFilter extends AbstractFilter implements FilterInterface {
-    public $validArgTypes =
-        array(
-            'arid',
-            'artist',
-            'artistname',
-            'creditname',
-            'comment',
-            'country',
-            'date',
-            'dur',
-            'format',
-            'isrc',
-            'number',
-            'position',
-            'primarytype',
-            'puid',
-            'qdur',
-            'recording',
-            'recordingaccent',
-            'reid',
-            'release',
-            'rgid',
-            'rid',
-            'secondarytype',
-            'status',
-            'tnum',
-            'tracks',
-            'tracksrelease',
-            'tag',
-            'type'
-        );
+class RecordingFilter extends AbstractFilter implements FilterInterface
+{
+    public $validArgTypes = array(
+        'arid',
+        'artist',
+        'artistname',
+        'creditname',
+        'comment',
+        'country',
+        'date',
+        'dur',
+        'format',
+        'isrc',
+        'number',
+        'position',
+        'primarytype',
+        'puid',
+        'qdur',
+        'recording',
+        'recordingaccent',
+        'reid',
+        'release',
+        'rgid',
+        'rid',
+        'secondarytype',
+        'status',
+        'tnum',
+        'tracks',
+        'tracksrelease',
+        'tag',
+        'type'
+    );
 
     /**
      * @return string
      */
-    public function getEntity() {
+    public function getEntity()
+    {
         return 'recording';
     }
 
@@ -55,9 +56,11 @@ class RecordingFilter extends AbstractFilter implements FilterInterface {
      * @param array       $response
      * @param MusicBrainz $brainz
      *
+     * @throws \MusicBrainz\Exception
      * @return array
      */
-    public function parseResponse(array $response, MusicBrainz $brainz) {
+    public function parseResponse(array $response, MusicBrainz $brainz)
+    {
         $recordings = array();
 
         if (isset($response['recording'])) {

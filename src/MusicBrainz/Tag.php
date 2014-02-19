@@ -4,13 +4,21 @@ namespace MusicBrainz;
 
 /**
  * Represents a MusicBrainz tag object
- *
+ * @package MusicBrainz
  */
 class Tag
 {
+    /**
+     * @var string
+     */
     public $name;
+    /**
+     * @var string
+     */
     public $score;
-
+    /**
+     * @var array
+     */
     private $data;
 
     /**

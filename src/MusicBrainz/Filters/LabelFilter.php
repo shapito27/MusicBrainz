@@ -12,23 +12,25 @@ use MusicBrainz\MusicBrainz;
  */
 class LabelFilter extends AbstractFilter implements FilterInterface
 {
-    protected $validArgTypes =
-        array(
-            'aliaas',
-            'begin',
-            'code',
-            'comment',
-            'country',
-            'end',
-            'ended',
-            'ipi',
-            'label',
-            'labelaccent',
-            'laid',
-            'sortname',
-            'tag',
-            'type'
-        );
+    /**
+     * @var array
+     */
+    protected $validArgTypes = array(
+        'aliaas',
+        'begin',
+        'code',
+        'comment',
+        'country',
+        'end',
+        'ended',
+        'ipi',
+        'label',
+        'labelaccent',
+        'laid',
+        'sortname',
+        'tag',
+        'type'
+    );
 
     /**
      * @return string
@@ -42,7 +44,7 @@ class LabelFilter extends AbstractFilter implements FilterInterface
      * @param array       $response
      * @param MusicBrainz $brainz
      *
-     * @return array
+     * @return Label[]
      */
     public function parseResponse(array $response, MusicBrainz $brainz)
     {

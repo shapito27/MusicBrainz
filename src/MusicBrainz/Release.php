@@ -4,22 +4,57 @@ namespace MusicBrainz;
 
 /**
  * Represents a MusicBrainz release object
- *
+ * @package MusicBrainz
  */
 class Release
 {
+    /**
+     * @var string
+     */
     public $id;
+    /**
+     * @var string
+     */
     public $title;
+    /**
+     * @var string
+     */
     public $status;
+    /**
+     * @var string
+     */
     public $quality;
+    /**
+     * @var string
+     */
     public $language;
+    /**
+     * @var string
+     */
     public $script;
+    /**
+     * @var string
+     */
     public $date;
+    /**
+     * @var string
+     */
     public $country;
+    /**
+     * @var string
+     */
     public $barcode;
+    /**
+     * @var Artist[]
+     */
     public $artists = array();
+    /**
+     * @var
+     */
     protected $releaseDate;
-
+    /**
+     * @var array
+     */
     private $data;
 
     /**
@@ -42,10 +77,14 @@ class Release
         $this->barcode  = isset($release['barcode']) ? (string)$release['barcode'] : '';
     }
 
+    /**
+     * @return string
+     */
     public function getId()
     {
         return $this->id;
     }
+
     /**
      * Get's the earliest release date
      * @return \DateTime
@@ -66,13 +105,13 @@ class Release
         return new \DateTime();
     }
 
-
     /**
      * @param array $releaseEvents
      *
      * @return array
      */
-    public function getReleaseEventDates(array $releaseEvents) {
+    public function getReleaseEventDates(array $releaseEvents)
+    {
 
         $releaseDate = new \DateTime();
 

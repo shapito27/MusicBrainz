@@ -4,7 +4,7 @@ namespace MusicBrainz;
 
 /**
  * Represents a MusicBrainz collection object
- *
+ * @package MusicBrainz
  */
 class Collection
 {

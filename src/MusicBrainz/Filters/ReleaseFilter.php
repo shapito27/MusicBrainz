@@ -12,39 +12,41 @@ use MusicBrainz\Release;
  */
 class ReleaseFilter extends AbstractFilter implements FilterInterface
 {
-    protected $validArgTypes =
-        array(
-            'arid',
-            'artist',
-            'artistname',
-            'asin',
-            'barcode',
-            'catno',
-            'comment',
-            'country',
-            'creditname',
-            'date',
-            'discids',
-            'discidsmedium',
-            'format',
-            'laid',
-            'label',
-            'lang',
-            'mediums',
-            'primarytype',
-            'puid',
-            'reid',
-            'release',
-            'releaseaccent',
-            'rgid',
-            'script',
-            'secondarytype',
-            'status',
-            'tag',
-            'tracks',
-            'tracksmedium',
-            'type'
-        );
+    /**
+     * @var array
+     */
+    protected $validArgTypes = array(
+        'arid',
+        'artist',
+        'artistname',
+        'asin',
+        'barcode',
+        'catno',
+        'comment',
+        'country',
+        'creditname',
+        'date',
+        'discids',
+        'discidsmedium',
+        'format',
+        'laid',
+        'label',
+        'lang',
+        'mediums',
+        'primarytype',
+        'puid',
+        'reid',
+        'release',
+        'releaseaccent',
+        'rgid',
+        'script',
+        'secondarytype',
+        'status',
+        'tag',
+        'tracks',
+        'tracksmedium',
+        'type'
+    );
 
     /**
      * @return string

@@ -10,6 +10,9 @@ use MusicBrainz\MusicBrainz;
  */
 interface FilterInterface
 {
+    /**
+     * @return string
+     */
     public function getEntity();
 
     /**

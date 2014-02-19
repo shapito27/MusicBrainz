@@ -7,6 +7,9 @@ namespace MusicBrainz\HttpAdapters;
  */
 abstract class AbstractHttpAdapter
 {
+    /**
+     * @var string
+     */
     const URL = 'http://musicbrainz.org/ws/2';
 
     /**
