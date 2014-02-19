@@ -2,6 +2,7 @@
 
 namespace MusicBrainz\Tests;
 
+use MusicBrainz\HttpAdapters\GuzzleHttpAdapter;
 use MusicBrainz\MusicBrainz;
 
 /**
@@ -9,11 +10,19 @@ use MusicBrainz\MusicBrainz;
  */
 class MusicBrainzTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var \MusicBrainz\MusicBrainz
+     */
+    protected $brainz;
+
     public function setUp()
     {
-        $this->brainz = new MusicBrainz($this->getMock('\Guzzle\Http\ClientInterface'));
+        $this->brainz = new MusicBrainz(new GuzzleHttpAdapter($this->getMock('\Guzzle\Http\ClientInterface')));
     }
 
+    /**
+     * @return array
+     */
     public function MBIDProvider()
     {
         return array(
