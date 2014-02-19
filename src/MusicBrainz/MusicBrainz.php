@@ -261,7 +261,7 @@ class MusicBrainz
     /**
      * @var string
      */
-    private $userAgent = 'MusicBrainz PHP Api/0.1.0';
+    private $userAgent = 'MusicBrainz PHP Api/0.2.0';
     /**
      * The username a MusicBrainz user. Used for authentication.
      *
