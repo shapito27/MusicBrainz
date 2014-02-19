@@ -17,10 +17,12 @@
         "php": ">=5.3.8"
     },
     "require-dev": {
-        "guzzle/guzzle": "v3.7.2"
+        "guzzle/guzzle": "~3.8.0",
+        "phpunit/phpunit": "3.7.*"
     },
     "suggest": {
-        "guzzle/guzzle": ""
+        "guzzle/guzzle": "Allows you to use the GuzzleHttpAdapter. You must install one of the supported adapters.",
+        "rmccue/requests": "Allows you to use the RequestsHttpAdapter. You must install one of the supported adapters."
     },
     "autoload": {
         "psr-0": {
