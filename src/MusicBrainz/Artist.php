@@ -37,11 +37,11 @@ class Artist
      */
     private $country;
     /**
-     * @var \DateTime
+     * @var string
      */
     private $beginDate;
     /**
-     * @var \DateTime
+     * @var string
      */
     private $endDate;
     /**
@@ -74,8 +74,8 @@ class Artist
         $this->sortName  = isset($artist['sort-name']) ? (string)$artist['sort-name'] : '';
         $this->gender    = isset($artist['gender']) ? (string)$artist['gender'] : '';
         $this->country   = isset($artist['country']) ? (string)$artist['country'] : '';
-        $this->beginDate = isset($artist['life-span']['begin']) ? new \DateTime($artist['life-span']['begin']) : null;
-        $this->endDate   = isset($artist['life-span']['ended']) ? new \DateTime($artist['life-span']['ended']) : null;
+        $this->beginDate = isset($artist['life-span']['begin']) ? $artist['life-span']['begin'] : null;
+        $this->endDate   = isset($artist['life-span']['ended']) ? $artist['life-span']['ended'] : null;
     }
 
     /**
