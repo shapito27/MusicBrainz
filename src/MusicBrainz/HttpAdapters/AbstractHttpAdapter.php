@@ -1,11 +1,11 @@
 <?php
 
-namespace MusicBrainz\Clients;
+namespace MusicBrainz\HttpAdapters;
 
 /**
  * MusicBrainz HTTP Client interface
  */
-abstract class MbClient
+abstract class AbstractHttpAdapter
 {
     const URL = 'http://musicbrainz.org/ws/2';
 

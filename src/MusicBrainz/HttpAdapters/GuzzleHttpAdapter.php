@@ -1,14 +1,14 @@
 <?php
 
-namespace MusicBrainz\Clients;
+namespace MusicBrainz\HttpAdapters;
 
 use Guzzle\Http\ClientInterface;
 use MusicBrainz\Exception;
 
 /**
- * Guzzle Client
+ * Guzzle Http Adapter
  */
-class GuzzleMbClient extends MbClient
+class GuzzleHttpAdapter extends AbstractHttpAdapter
 {
     /**
      * The Guzzle client used to make cURL requests

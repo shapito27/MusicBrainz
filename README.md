@@ -10,14 +10,14 @@ This project is a fork of https://github.com/chrisdawson/MusicBrainz and takes s
 ```php
 <?php
     use Guzzle\Http\Client;
-    use MusicBrainz\Clients\GuzzleMbClient;
     use MusicBrainz\Filters\ArtistFilter;
     use MusicBrainz\Filters\RecordingFilter;
+    use MusicBrainz\HttpAdapters\GuzzleHttpAdapter;
     use MusicBrainz\MusicBrainz;
 
     require __DIR__ . '/vendor/autoload.php';
 
-    $brainz = new MusicBrainz(new GuzzleMbClient(new Client()), 'username', 'password');
+    $brainz = new MusicBrainz(new GuzzleHttpAdapter(new Client()), 'username', 'password');
     $brainz->setUserAgent('ApplicationName', '0.2', 'http://example.com');
 
     $args = array(

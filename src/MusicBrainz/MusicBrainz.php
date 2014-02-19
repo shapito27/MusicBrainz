@@ -2,7 +2,7 @@
 
 namespace MusicBrainz;
 
-use MusicBrainz\Clients\MbClient;
+use MusicBrainz\HttpAdapters\AbstractHttpAdapter;
 
 /**
  * Connect to the MusicBrainz web service
@@ -13,6 +13,9 @@ use MusicBrainz\Clients\MbClient;
  */
 class MusicBrainz
 {
+    /**
+     * @var array
+     */
     private static $validIncludes = array(
         'artist'        => array(
             "recordings",
@@ -180,6 +183,9 @@ class MusicBrainz
             'releases'
         )
     );
+    /**
+     * @var array
+     */
     private static $validBrowseIncludes = array(
         'release'       => array(
             "artist-credits",
@@ -225,6 +231,9 @@ class MusicBrainz
             "user-ratings"
         )
     );
+    /**
+     * @var array
+     */
     private static $validReleaseTypes = array(
         "nat",
         "album",
@@ -239,14 +248,19 @@ class MusicBrainz
         "remix",
         "other"
     );
+    /**
+     * @var array
+     */
     private static $validReleaseStatuses = array(
         "official",
         "promotion",
         "bootleg",
         "pseudo-release"
     );
+    /**
+     * @var string
+     */
     private $userAgent = 'MusicBrainz PHP Api/0.1.0';
-    private $userAgentClient = 'MusicBrainz PHP Api-0.1.0';
     /**
      * The username a MusicBrainz user. Used for authentication.
      *
@@ -260,23 +274,23 @@ class MusicBrainz
      */
     private $password = null;
     /**
-     * The client used to make requests
+     * The Http adapter used to make requests
      *
-     * @var \MusicBrainz\Clients\MbClient
+     * @var \MusicBrainz\HttpAdapters\AbstractHttpAdapter
      */
-    private $client;
+    private $adapter;
 
     /**
      * Initializes the class. You can pass the user’s username and password
      * However, you can modify or add all values later.
      *
-     * @param \MusicBrainz\Clients\MbClient $client The client used to make requests
-     * @param string                        $user
-     * @param string                        $password
+     * @param HttpAdapters\AbstractHttpAdapter $adapter The Http adapter used to make requests
+     * @param string                           $user
+     * @param string                           $password
      */
-    public function __construct(MbClient $client, $user = null, $password = null)
+    public function __construct(AbstractHttpAdapter $adapter, $user = null, $password = null)
     {
-        $this->client = $client;
+        $this->adapter = $adapter;
 
         if (null != $user) {
             $this->setUser($user);
@@ -317,7 +331,7 @@ class MusicBrainz
             'fmt' => 'json'
         );
 
-        $response = $this->client->call($entity . '/' . $mbid, $params, $this->get_call_options(), $authRequired);
+        $response = $this->adapter->call($entity . '/' . $mbid, $params, $this->getHttpOptions(), $authRequired);
 
         return $response;
     }
@@ -366,7 +380,7 @@ class MusicBrainz
             'fmt'    => 'json'
         );
 
-        $response = $this->client->call($filter->getEntity() . '/', $params, $this->get_call_options(), $authRequired);
+        $response = $this->adapter->call($filter->getEntity() . '/', $params, $this->getHttpOptions(), $authRequired);
 
         return $response;
     }
@@ -514,7 +528,7 @@ class MusicBrainz
 
         $params = $filter->createParameters(array('limit' => $limit, 'offset' => $offset, 'fmt' => 'json'));
 
-        $response = $this->client->call($filter->getEntity() . '/', $params, $this->get_call_options());
+        $response = $this->adapter->call($filter->getEntity() . '/', $params, $this->getHttpOptions());
 
         return $filter->parseResponse($response, $this);
     }
@@ -650,16 +664,14 @@ class MusicBrainz
     /**
      * @return array
      */
-    public function get_call_options()
+    public function getHttpOptions()
     {
-        $options = array();
-
-        $options['method']     = 'GET';
-        $options['user-agent'] = $this->getUserAgent();
-        $options['user']       = $this->getUser();
-        $options['password']   = $this->getPassword();
-
-        return $options;
+        return array(
+            'method'     => 'GET',
+            'user-agent' => $this->getUserAgent(),
+            'user'       => $this->getUser(),
+            'password'   => $this->getPassword()
+        );
     }
 
     /**
@@ -687,8 +699,7 @@ class MusicBrainz
             throw new Exception('User agent: version should not contain a "-" character.');
         }
 
-        $this->userAgent       = $application . '/' . $version . ' (' . $contactInfo . ')';
-        $this->userAgentClient = $application . '-' . $version;
+        $this->userAgent = $application . '/' . $version . ' (' . $contactInfo . ')';
     }
 
     /**

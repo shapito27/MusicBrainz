@@ -1,14 +1,14 @@
 <?php
 
-namespace MusicBrainz\Clients;
+namespace MusicBrainz\HttpAdapters;
 
 use MusicBrainz\Exception;
 use Requests;
 
 /**
- * Requests Client
+ * Requests HTTP Client Adapter
  */
-class RequestsMbClient extends MbClient
+class RequestsHttpAdapter extends AbstractHttpAdapter
 {
     /**
      * Initializes the class.
@@ -34,28 +34,27 @@ class RequestsMbClient extends MbClient
             throw new Exception('You must set a valid User Agent before accessing the MusicBrainz API');
         }
 
-        $url = MbClient::URL . '/' . $path;
-        $i = 0;
-        foreach ($params as $name => $value)
-        {
-            if ($i == 0) $url .= '?';
-            else $url .= '&';
-
+        $url = self::URL . '/' . $path;
+        $i   = 0;
+        foreach ($params as $name => $value) {
+            $url .= ($i++ == 0) ? '?' : '&';
             $url .= urlencode($name) . '=' . urlencode($value);
-            ++$i;
         }
-        $headers = array();
-        $headers['Accept'] = 'application/json';
-        $headers['User-Agent'] = $options['user-agent'];
-        $reqopt = array();
+
+        $headers = array(
+            'Accept'     => 'application/json',
+            'User-Agent' => $options['user-agent']
+        );
+
+        $requestOptions = array();
         if ($isAuthRequired) {
             if ($options['user'] != null && $options['password'] != null) {
-                $reqopt['auth'] = array($options['user'], $options['password']);
+                $requestOptions['auth'] = array($options['user'], $options['password']);
             } else {
                 throw new Exception('Authentication is required');
             }
         }
-        $request = Requests::get($url, $headers, $reqopt);
+        $request = Requests::get($url, $headers, $requestOptions);
 
         return json_decode($request->body);
     }

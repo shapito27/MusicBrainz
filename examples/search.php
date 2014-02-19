@@ -1,17 +1,17 @@
 <pre><?php
 
 use Guzzle\Http\Client;
-use MusicBrainz\Clients\GuzzleMbClient;
 use MusicBrainz\Filters\ArtistFilter;
 use MusicBrainz\Filters\LabelFilter;
 use MusicBrainz\Filters\RecordingFilter;
 use MusicBrainz\Filters\ReleaseGroupFilter;
+use MusicBrainz\HttpAdapters\GuzzleHttpAdapter;
 use MusicBrainz\MusicBrainz;
 
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 // Create new MusicBrainz object
-$brainz = new MusicBrainz(new GuzzleMbClient(new Client()), 'username', 'password');
+$brainz = new MusicBrainz(new GuzzleHttpAdapter(new Client()));
 $brainz->setUserAgent('ApplicationName', '0.2', 'http://example.com');
 
 /**
