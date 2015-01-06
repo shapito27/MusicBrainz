@@ -62,6 +62,9 @@ class RequestsHttpAdapter extends AbstractHttpAdapter
         }
         $request = Requests::get($url, $headers, $requestOptions);
 
+        // musicbrainz throttle
+        sleep(1);
+
         return json_decode($request->body);
     }
 }
