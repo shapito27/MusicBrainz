@@ -10,6 +10,19 @@ use Requests;
  */
 class RequestsHttpAdapter extends AbstractHttpAdapter
 {
+
+    /**
+     * Initializes the class.
+     *
+     * @param null $endpoint Override the default endpoint (useful for local development)
+     */
+    public function __construct($endpoint = null)
+    {
+        if (filter_var($endpoint, FILTER_VALIDATE_URL)) {
+            $this->endpoint = $endpoint;
+        }
+    }
+
     /**
      * Perform an HTTP request on MusicBrainz
      *
@@ -27,7 +40,7 @@ class RequestsHttpAdapter extends AbstractHttpAdapter
             throw new Exception('You must set a valid User Agent before accessing the MusicBrainz API');
         }
 
-        $url = self::URL . '/' . $path;
+        $url = $this->endpoint . '/' . $path;
         $i   = 0;
         foreach ($params as $name => $value) {
             $url .= ($i++ == 0) ? '?' : '&';
