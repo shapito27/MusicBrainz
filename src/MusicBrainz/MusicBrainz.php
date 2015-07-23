@@ -312,8 +312,6 @@ class MusicBrainz
      * @param array  $includes
      *
      * @throws Exception
-     * @internal param array $inc
-     *
      * @return array
      */
     public function lookup($entity, $mbid, array $includes = array())
@@ -469,14 +467,14 @@ class MusicBrainz
         }
 
         return $this->browse(
-                    new Filters\ReleaseFilter(array()),
-                        $entity,
-                        $mbid,
-                        $includes,
-                        $limit,
-                        $offset,
-                        $releaseType,
-                        $releaseStatus
+            new Filters\ReleaseFilter(array()),
+            $entity,
+            $mbid,
+            $includes,
+            $limit,
+            $offset,
+            $releaseType,
+            $releaseStatus
         );
     }
 
@@ -504,13 +502,13 @@ class MusicBrainz
         }
 
         return $this->browse(
-                    new Filters\ReleaseGroupFilter(array()),
-                        $entity,
-                        $mbid,
-                        $includes,
-                        $limit,
-                        $offset,
-                        $releaseType
+            new Filters\ReleaseGroupFilter(array()),
+            $entity,
+            $mbid,
+            $includes,
+            $limit,
+            $offset,
+            $releaseType
         );
     }
 
@@ -530,8 +528,6 @@ class MusicBrainz
      * @param null|int                $offset
      *
      * @throws Exception
-     * @internal param \MusicBrainz\Filters\FilterInterface $trackFilter
-     *
      * @return array
      */
     public function search(Filters\FilterInterface $filter, $limit = 25, $offset = null)

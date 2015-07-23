@@ -21,10 +21,15 @@ class GuzzleHttpAdapter extends AbstractHttpAdapter
      * Initializes the class.
      *
      * @param \Guzzle\Http\ClientInterface $client The Guzzle client used to make requests
+     * @param null                         $endpoint Override the default endpoint (useful for local development)
      */
-    public function __construct(ClientInterface $client)
+    public function __construct(ClientInterface $client, $endpoint = null)
     {
         $this->client = $client;
+
+        if (filter_var($endpoint, FILTER_VALIDATE_URL)) {
+            $this->endpoint = $endpoint;
+        }
     }
 
     /**
@@ -44,11 +49,11 @@ class GuzzleHttpAdapter extends AbstractHttpAdapter
             throw new Exception('You must set a valid User Agent before accessing the MusicBrainz API');
         }
 
-        $this->client->setBaseUrl(self::URL);
+        $this->client->setBaseUrl($this->endpoint);
         $this->client->setConfig(
-                     array(
-                         'data' => $params
-                     )
+            array(
+                'data' => $params
+            )
         );
 
         $request = $this->client->get($path . '{?data*}');
