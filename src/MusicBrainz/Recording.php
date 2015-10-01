@@ -44,7 +44,9 @@ class Recording
         $this->score    = (isset($recording['score'])) ? (int)$recording['score'] : 0;
         $this->artistID = $recording['artist-credit'][0]['artist']['id'];
 
-        $this->setReleases($recording['releases']);
+        if (isset($recording['releases'])) {
+            $this->setReleases($recording['releases']);
+        }
     }
 
     /**
